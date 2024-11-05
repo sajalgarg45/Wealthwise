@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tempestas - News</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Satisfy&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@500&family=Roboto:wght@500&display=swap");
+
+        /* Root Variables for Colors */
+        :root {
+            --primary-text-color: #183b56;
+            --secondary-text-color: #577592;
+            --accent-color: #2294ed;
+            --accent-color-dark: #1d69a3;
+            --card-bg-color: #ffffff;
+            --card-hover-bg-color: #f9fdff;
+            --header-bg-color: rgba(155, 211, 231, 0.23);
+            --header-border-color: rgba(47, 85, 173, 0.786);
+            --search-button-bg: var(--accent-color);
+            --search-button-hover-bg: var(--accent-color-dark);
+            --footer-bg-color: #2c3e50;
+            --footer-text-color: #ffffff;
+            --body-bg-color: #f4f6f9;
+            --card-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+            --card-hover-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            --pastel-orange: #ffe5d9;
+            --pastel-red: #ffebee;
+            --pastel-blue: #e3f2fd;
+            --pastel-green: #e8f5e9;
+            --pastel-yellow: #fffde7;
+            --pastel-purple: #f3e5f5;
+            --pastel-cyan: #e0f7fa;
+        }
+
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #B7B7B7;
+            color: var(--primary-text-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        p {
+            font-family: "Roboto", sans-serif;
+            color: var(--secondary-text-color);
+            line-height: 1.6rem;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .flex {
+            display: flex;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1180px;
+            margin-inline: auto;
+            overflow: hidden;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            height: 80px;
+            background-color: #E4E0E1;
+            border-bottom: 2px solid var(--header-border-color) !important;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .navbar-brand img {
+            height: 60px;
+            width: auto;
+        }
+
+        .nav-link {
+            color: rgb(14, 12, 72) !important;
+            font-weight: 500;
+            font-size: 18px !important;
+            margin-right: 30px;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: rgb(255, 255, 255) !important;
+        }
+
+        .btn-outline-success {
+            height: 35px;
+            font-size: 13px !important;
+            border: 1px solid rgb(95, 147, 216) !important;
+            color: rgb(255, 255, 255) !important;
+            background-color: rgba(36, 108, 56, 0.918);
+            padding-right: 10px;
+            font-weight: 800;
+            transition: background-color 0.3s, border 0.3s;
+        }
+
+        .btn-outline-success:hover {
+            background-color: var(--search-button-hover-bg) !important;
+            border: 2px solid rgb(95, 147, 216) !important;
+        }
+
+        /* Main Content Styling */
+        main {
+            flex: 1;
+            padding: 20px;
+        }
+
+        /* Cards Container */
+        .cards-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            align-items: stretch;
+        }
+
+        /* Card Styles */
+        .card {
+            width: 100%;
+            max-width: 360px;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--card-bg-color);
+            border-radius: 15px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: var(--card-hover-shadow);
+            background-color: var(--card-hover-bg-color);
+            transform: translateY(-5px);
+        }
+
+        .card-header img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+
+        .card-content {
+            padding: 15px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .news-source {
+            margin-bottom: 12px;
+            color: var(--secondary-text-color);
+            font-size: 0.9rem;
+        }
+
+        .news-desc {
+            flex-grow: 1;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .card h2 {
+            display: flex;
+            align-items: center;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .card h2 svg {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+            color: var(--accent-color);
+        }
+
+        /* Search Bar Styles */
+        .search-bar {
+            height: 32px;
+            gap: 8px;
+        }
+
+        .news-input {
+            width: 200px;
+            height: 100%;
+            padding-inline: 12px;
+            border-radius: 4px;
+            border: 2px solid #bbd0e2;
+            font-family: "Roboto", sans-serif;
+        }
+
+        .search-button {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 8px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: "Roboto", sans-serif;
+            transition: background-color 0.3s;
+        }
+
+        .search-button:hover {
+            background-color: var(--accent-color-dark);
+        }
+
+        /* Footer Styling */
+        footer {
+            background-color: var(--footer-bg-color);
+            color: var(--footer-text-color);
+            text-align: center;
+            padding: 15px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .cards-container {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .cards-container {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg">
+            <div class="container-fluid">
+                <!-- Logo -->
+                <a class="navbar-brand" href="index.html">
+                    <img src="/logo.png" alt="Tempestas Logo">
+                </a>
+                
+                <!-- Toggler for Mobile View -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" 
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <!-- Navbar Links and Search Bar -->
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <!-- Navbar Links -->
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link" href="dashboard.html">Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" href="news.html">News</a></li>
+                        <li class="nav-item"><a class="nav-link" href="contact.html">Contact Us</a></li>
+                    </ul>
+                    
+                    <!-- Search Bar -->
+                    <form class="d-flex me-3" role="search" id="search-form" onsubmit="event.preventDefault(); searchButton.click();">
+                        <input id="search-text" type="text" class="form-control me-2 news-input" placeholder="e.g. Farming" aria-label="Search">
+                        <button id="search-button" class="btn btn-outline-success search-button" type="button">Search</button>
+                    </form>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="cards-container container" id="cards-container">
+            <!-- News Cards will be dynamically inserted here -->
+        </div>
+    </main>
+
+    <!-- Template for News Cards -->
+    <template id="template-news-card">
+        <div class="card">
+            <div class="card-header">
+                <img src="https://via.placeholder.com/400x200" alt="news-image" id="news-img">
+            </div>
+            <div class="card-content">
+                <h2 id="news-title">
+                    <!-- SVG Icon Placeholder -->
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path d="M12 2a7 7 0 017 7v3.28a2 2 0 01-.536 1.415l-2.464 2.464a1 1 0 00-.293.707v4.121a1 1 0 01-.293.707l-1 1A1 1 0 0113 23h-2a1 1 0 01-.707-.293l-1-1a1 1 0 01-.293-.707v-4.121a1 1 0 00-.293-.707l-2.464-2.464A2 2 0 015 12.28V9a7 7 0 017-7z" />
+                    </svg>
+                    This is the Title
+                </h2>
+                <h6 class="news-source" id="news-source">End Gadget · 26/08/2023</h6>
+                <p class="news-desc" id="news-desc">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Recusandae saepe quis voluptatum quisquam vitae doloremque facilis molestias quae ratione cumque!</p>
+            </div>
+        </div>
+    </template>
+
+    <!-- Sidebar Content (Optional: Latest News and Popular Tags) -->
+    <aside class="container mt-5">
+        <div class="row">
+            <div class="col-md-4">
+                <!-- Latest News Card -->
+                <div class="card mb-4" style="background-color: var(--pastel-orange);">
+                    <div class="card-header">
+                        <h4 class="font-weight-bold">
+                            <!-- SVG Icon for Latest News -->
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path d="M12 2a9 9 0 100 18 9 9 0 000-18zM12 4a7 7 0 010 14 7 7 0 010-14z" />
+                            </svg>
+                            Latest News
+                        </h4>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">New Farming Techniques Revolutionize Agriculture</li>
+                        <li class="list-group-item">Irrigation Systems Become More Efficient</li>
+                        <li class="list-group-item">Soil Health Initiatives Gain Momentum</li>
+                        <li class="list-group-item">Innovations in Sustainable Agriculture</li>
+                        <li class="list-group-item">Advancements in Crop Management</li>
+                    </ul>
+                </div>
+
+                <!-- Popular Tags Card -->
+                <div class="card mb-4" style="background-color: var(--pastel-yellow);">
+                    <div class="card-header">
+                        <h4 class="font-weight-bold">
+                            <!-- SVG Icon for Tags -->
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path d="M7 7h10M7 11h10M7 15h10" />
+                            </svg>
+                            Popular Tags
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <a href="#" class="badge bg-primary m-1">Farming</a>
+                        <a href="#" class="badge bg-primary m-1">Irrigation</a>
+                        <a href="#" class="badge bg-primary m-1">Agriculture</a>
+                        <a href="#" class="badge bg-primary m-1">Soil</a>
+                        <a href="#" class="badge bg-primary m-1">Sustainability</a>
+                        <a href="#" class="badge bg-primary m-1">Technology</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Tempestas. All rights reserved.</p>
+    </footer>
+
+    <!-- Bootstrap JS and Dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- News Page Scripts -->
+    <script>
+        const API_KEY = "9d4d7f3138cc49faa95dde0b3f2ad6d7";
+        const url = "https://newsapi.org/v2/everything?q=";
+
+        // When the page loads, fetch news related to farming, irrigation, agriculture, soil
+        window.addEventListener("load", () => fetchNews("finance OR money OR bank OR wealth"));
+
+        function reload() {
+            window.location.reload();
+        }
+
+        async function fetchNews(query) {
+            try {
+                const res = await fetch(`${url}${query}&apiKey=${API_KEY}`);
+                const data = await res.json();
+                bindData(data.articles);
+            } catch (error) {
+                console.error("Error fetching news:", error);
+            }
+        }
+
+        function bindData(articles) {
+            const cardsContainer = document.getElementById("cards-container");
+            const newsCardTemplate = document.getElementById("template-news-card");
+
+            cardsContainer.innerHTML = ""; // Clear existing content
+
+            // Iterate through the articles and create cards
+            articles.forEach((article) => {
+                if (!article.urlToImage) return; // Skip if no image
+                const cardClone = newsCardTemplate.content.cloneNode(true);
+                fillDataInCard(cardClone, article);
+                cardsContainer.appendChild(cardClone);
+            });
+        }
+
+        function fillDataInCard(cardClone, article) {
+            const newsImg = cardClone.querySelector("#news-img");
+            const newsTitle = cardClone.querySelector("#news-title");
+            const newsSource = cardClone.querySelector("#news-source");
+            const newsDesc = cardClone.querySelector("#news-desc");
+
+            // Populate the card with article data
+            newsImg.src = article.urlToImage;
+            newsTitle.innerHTML = article.title;
+            newsDesc.innerHTML = article.description;
+
+            const date = new Date(article.publishedAt).toLocaleString("en-US", {
+                timeZone: "Asia/Jakarta",
+            });
+
+            newsSource.innerHTML = `${article.source.name} · ${date}`;
+
+            cardClone.firstElementChild.addEventListener("click", () => {
+                window.open(article.url, "_blank"); // Open the news article in a new tab
+            });
+        }
+
+        // Handle nav item click and fetch news based on the selected topic
+        let curSelectedNav = null;
+        function onNavItemClick(id) {
+            fetchNews(id);
+            const navItem = document.getElementById(id);
+            curSelectedNav?.classList.remove("active");
+            curSelectedNav = navItem;
+            curSelectedNav.classList.add("active");
+        }
+
+        // Search functionality
+        const searchButton = document.getElementById("search-button");
+        const searchText = document.getElementById("search-text");
+
+        searchButton.addEventListener("click", () => {
+            const query = searchText.value.trim();
+            if (!query) return;
+            fetchNews(query);
+            curSelectedNav?.classList.remove("active");
+            curSelectedNav = null;
+        });
+    </script>
+</body>
+</html>

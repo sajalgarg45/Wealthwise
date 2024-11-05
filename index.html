@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WealthWise</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    
+    <!-- Bootstrap CSS for Responsive Design -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- GSAP Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
+    <!-- Custom CSS -->
+    
+    <style>
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: #333;
+            background-color: #f4f6f9;
+            line-height: 1.6;
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        ul {
+            list-style: none;
+        }
+
+
+/* NAVBAR */
+
+header {
+    background-color: #1b1b1b;
+}
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-right: 25px;
+}
+ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+ul li a {
+    color: #fff;
+    text-decoration: none;
+    padding-right: 40px;
+}
+ul li a:hover {
+    color: #c08240;
+}
+.auth-buttons {
+    display: flex;
+    gap: 15px;
+}
+.login-btn, .signup-btn {
+    color: #c08240;
+    text-decoration: none;
+    border: 1px solid #c08240;
+    padding: 5px 10px;
+    border-radius: 3px;
+}
+.signup-btn {
+    background-color: #c08240;;
+    color: #fff;
+}
+
+
+/* CONTENT SECTION */
+.content-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px;
+    background-color: #1b1b1b;
+    height: calc(100vh);
+}
+
+.left-half {
+    width: 50%;
+    padding-right: 20px;
+    padding-bottom: 70px;
+}
+#sh1{
+    font-size: 5vw;
+    letter-spacing: -4px;
+    color: #d19350;
+}
+#sh2{
+    font-size: 4vw;
+    letter-spacing: -4px;
+    line-height: 65px;
+}
+.left-half span {
+    color: #c08240;;
+}
+.left-half p {
+    font-size: 16px;
+    margin: 20px 0;
+    max-width: 400px;
+}
+.cta-buttons {
+    display: flex;
+    gap: 20px;
+}
+.cta-primary, .cta-secondary {
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: 1px solid #c08240;;
+    color: #fff;
+}
+.cta-primary {
+    background-color: #c08240;;
+}
+.right-half {
+    width: 50%;
+    text-align: center;
+}
+.right-half img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+
+
+        /* About Section */
+
+        .about-section {
+            padding: 60px 30px;
+            background-color: #ffffff;
+        }
+        .about-section h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+            position: relative;
+            display: inline-block;
+        }
+        .about-section h2::after {
+            content: '';
+            width: 60px;
+            height: 4px;
+            background-color: #007bff;
+            position: absolute;
+            left: 50%;
+            bottom: -10px;
+            transform: translateX(-50%);
+        }
+        .about-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            align-items: flex-start;
+        }
+        .about-text {
+            flex: 1 1 500px;
+        }
+        .about-text p {
+            margin-bottom: 20px;
+            font-size: 1rem;
+            color: #555;
+        }
+        .about-image {
+            flex: 1 1 400px;
+            position: relative;
+        }
+        .about-image img {
+            width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        .about-image img:hover {
+            transform: scale(1.05);
+        }
+
+        /* Additional Images in About Section */
+
+        .additional-images {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .additional-images img {
+            width: calc(50% - 15px);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        .additional-images img:hover {
+            transform: scale(1.05);
+        }
+
+
+        /* Services Section */
+        .services-section {
+            padding: 60px 30px;
+            background-color: #D8D2C2;
+        }
+        .services-section h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+            position: relative;
+            display: inline-block;
+        }
+        .services-section h2::after {
+            content: '';
+            width: 60px;
+            height: 4px;
+            background-color: #28a745;
+            position: absolute;
+            left: 50%;
+            bottom: -10px;
+            transform: translateX(-50%);
+        }
+        .services-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+        .service-card {
+            background-color: #ffffff;
+            border-radius: 15px;
+            padding: 30px 20px;
+            width: 300px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .service-card i {
+            font-size: 3rem;
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+        .service-card h3 {
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            color: #333;
+        }
+        .service-card p {
+            font-size: 1rem;
+            color: #555;
+        }
+
+
+        /* Team Section */
+        
+        .team-section {
+            padding: 60px 30px;
+            background-color: #ffffff;
+        }
+        .team-section h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+            position: relative;
+            display: inline-block;
+        }
+        .team-section h2::after {
+            content: '';
+            width: 60px;
+            height: 4px;
+            background-color: #ffc107;
+            position: absolute;
+            left: 50%;
+            bottom: -10px;
+            transform: translateX(-50%);
+        }
+        .team-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+        .team-card {
+            background-color: #f9f9f9;
+            border-radius: 50%;
+            width: 200px;
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+        .team-card:hover {
+            transform: scale(1.1);
+        }
+        .team-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .team-info {
+            position: absolute;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            width: 100%;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .team-card:hover .team-info {
+            opacity: 1;
+        }
+
+
+        /* Future Features Section */
+        
+        .future-section {
+            padding: 60px 30px;
+            background-color: #E4E0E1;
+        }
+        .future-section h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+            position: relative;
+            display: inline-block;
+        }
+        .future-section h2::after {
+            content: '';
+            width: 60px;
+            height: 4px;
+            background-color: #17a2b8;
+            position: absolute;
+            left: 50%;
+            bottom: -10px;
+            transform: translateX(-50%);
+        }
+        .future-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .future-container p {
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 20px;
+        }
+        .future-container ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+        .future-container li {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            width: 200px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .future-container li:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .future-container li i {
+            font-size: 2rem;
+            color: #28a745;
+            margin-bottom: 15px;
+        }
+        .future-container li h4 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .future-container li p {
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+
+        /* Footer Styling */
+        
+        footer {
+            background-color: #2c3e50;
+            color: #fff;
+            padding: 40px 30px;
+        }
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: space-between;
+        }
+        .footer-section {
+            flex: 1 1 250px;
+        }
+        .footer-section h4 {
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+        .footer-section h4::after {
+            content: '';
+            width: 40px;
+            height: 3px;
+            background-color: #007bff;
+            position: absolute;
+            left: 0;
+            bottom: -5px;
+            transform: translateX(0);
+        }
+        .footer-section p, .footer-section ul {
+            font-size: 0.95rem;
+            color: #ddd;
+        }
+        .footer-section ul li {
+            margin-bottom: 10px;
+        }
+        .footer-section ul li a {
+            color: #ddd;
+            transition: color 0.3s;
+        }
+        .footer-section ul li a:hover {
+            color: #fff;
+        }
+        .social-icons a {
+            color: #ddd;
+            font-size: 1.2rem;
+            margin-right: 15px;
+            transition: color 0.3s;
+        }
+        .social-icons a:hover {
+            color: #007bff;
+        }
+
+
+        /* Responsive Adjustments */
+        
+        @media (max-width: 768px) {
+            .about-content {
+                flex-direction: column;
+            }
+            .services-container, .team-container, .future-container ul {
+                flex-direction: column;
+                align-items: center;
+            }
+            .media-placeholder {
+                height: 200px;
+            }
+            .footer-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .footer-section {
+                flex: 1 1 100%;
+                text-align: center;
+            }
+            .additional-images img {
+                width: 100%;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+
+    <header>
+        <nav>
+            <div class="logo"><img src="logo.png" height="80px" width="250px"></div>
+            <ul>
+                <li><a href="">Home</a></li>
+                <li><a href="#ab">About</a></li>
+                <li><a href="#of">Offer</a></li>
+                <li><a href="#te">Team</a></li>
+                <li><a href="#fu">Future Plans</a></li>
+            </ul>
+            <div class="auth-buttons">
+                <a href="signin.html" class="login-btn">Log In</a>
+                <a href="signin.html" class="signup-btn">Sign Up</a>
+            </div>
+        </nav>
+    </header>
+
+
+    <section class="content-section"> 
+        
+        <div class="left-half"> 
+            <h1 id="sh1">WEALTHWISE</h1>
+            <h1 id="sh2">EVERYDAY EXPENSE TRACKER</h1>
+            <p id="sh3">Effortlessly manage your finances with our advanced expense tracker. Track spending, set budgets, and gain insights with real-time analytics, helping you stay in control of your financial future.</p>
+            <div class="cta-buttons">
+                <a href="signin.html" class="cta-primary">Get Started</a>
+                <a href="#ab" class="cta-secondary">View Demo</a>
+            </div>
+        </div>
+        
+        <div class="right-half"> 
+            <img src="Landing_img.png" alt="Expense Management">
+        </div>
+    
+    </section>
+
+
+    <section id="ab"class="about-section">
+        <h2>About Our Expense Management</h2>
+        <div class="about-content">
+            <div class="about-text">
+                <p>At WealthWise, we are dedicated to empowering individuals in managing and growing their finances through an innovative, user-friendly platform. Our state-of-the-art expense tracker and budgeting tools enable users to gain full control of their spending, set meaningful financial goals, and make informed decisions with real-time insights and interactive graphs.</p>
+                <p>Our expertise spans various financial services, including loans, mutual funds, stocks, and cryptocurrency tracking. We integrate seamlessly with trusted sources to bring timely financial news and insights directly to our users. WealthWise collaborates with industry experts to ensure our tools are tailored to meet the unique needs of each user, from the beginner to the seasoned investor.</p>
+                <p>Our mission is to provide users with the resources and knowledge needed to cultivate financial independence and security. Through advanced technology and a commitment to simplicity, we strive to create a platform that not only supports daily money management but also promotes long-term financial growth and confidence.</p>
+            </div>
+            <div class="about-image">
+                <img src="/abb.png" alt="Irrigation System">
+            </div>
+        </div>
+    </section>
+
+
+    <section id="of"class="services-section">
+        <h2>What We Offer</h2>
+        <div class="services-container">
+            <div class="service-card">
+                <i class="fas fa-money-check-alt"></i>
+                <h3>Money Management</h3>
+                <p>Effortlessly track expenses and spending patterns to ensure every Money is accounted</p>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-chart-line"></i>
+                <h3>Graphic Analytics</h3>
+                <p>Interactive and dynamic graphs provide a visual breakdown of your finances</p>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-piggy-bank"></i>
+                <h3>Budget Setting</h3>
+                <p>Set and customize budgets to align with your financial goals and avoid overspending.</p>
+            </div>
+            <div class="service-card">
+                <i class="fa fa-bank"></i>
+                <h3>Banking Solutions</h3>
+                <p>Access a comprehensive suite of tools for managing loans, investments, and savings accounts</p>
+            </div>
+        </div>
+    </section>
+
+
+    <section id="te"class="team-section">
+        <h2>Meet Our Team</h2>
+        <div class="team-container">
+            
+            <div class="team-card">
+                <img src="/sajal.JPG" alt="Team Member 1">
+                <div class="team-info">
+                    <h5>Sajal Garg</h5>
+                    <p>Founder & CEO</p>
+                </div>
+            </div>
+            
+            <div class="team-card">
+                <img src="/athrv.JPG" alt="Team Member 2">
+                <div class="team-info">
+                    <h5>Athrv Sharma</h5>
+                    <p>CTO</p>
+                </div>
+            </div>
+
+            <div class="team-card">
+                <img src="/ananaya.jpg" alt="Team Member 3">
+                <div class="team-info">
+                    <h5>Ananaya Sharma</h5>
+                    <p>HOD</p>
+                </div>
+            </div>
+
+            <div class="team-card">
+                <img src="/gurnoor.jpg" alt="Team Member 4">
+                <div class="team-info">
+                    <h5>Gurnoor Singh</h5>
+                    <p>M.D.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <section id="fu"class="future-section">
+        <h2>Our Future Plans</h2>
+        <div class="future-container">
+            <p>At Wealthwise, we are constantly innovating to bring you the latest advancements in Fintech technology. Here are some exciting features we plan to introduce in the near future:</p>
+            <ul>
+                <li>
+                    <i class="fas fa-chart-line"></i>
+                    <h4>Interactive Analytics</h4>
+                    <p>In-depth data visualizations and analytics to help users understand spending habits, investment performance</p>
+                </li>
+                <li>
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <h4>Cloud Integration</h4>
+                    <p>Seamless integration with cloud platforms to securely back up financial data, allowing for remote access</p>
+                </li>
+                <li>
+                    <i class="fas fa-mobile-alt"></i>
+                    <h4>Mobile App</h4>
+                    <p>User-friendly mobile application designed for on-the-go financial management, enabling users to track expenses, investments, and savings anytime</p>
+                </li>
+                <li>
+                    <i class="fa fa-bank"></i>
+                    <h4>Banking Services</h4>
+                    <p>Comprehensive banking solutions, from loan tracking to investment management, provide users with tools to handle all aspects of personal finance</p>
+                </li>
+                <li>
+                    <i class="fab fa-paypal"></i>
+                    <h4>Universal Payment</h4>
+                    <p>A streamlined payment system supporting multiple currencies and payment methods, making transactions and financial tracking</p>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h4>About WealthWise</h4>
+                <p>Effortlessly manage your finances with our advanced expense tracker. Track spending, set budgets, and gain insights with real-time analytics, helping you stay in control of your financial future.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="">Home</a></li>
+                    <li><a href="#ab">About</a></li>
+                    <li><a href="#of">Offer</a></li>
+                    <li><a href="#te">Team</a></li>
+                    <li><a href="#fu">Future Plans</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Contact Us</h4>
+                <p><i class="fas fa-map-marker-alt"></i> 123 Greenway Drive, FintechCity, Country</p>
+                <p><i class="fas fa-phone-alt"></i> +1 (234) 567-890</p>
+                <p><i class="fas fa-envelope"></i> info@wealthwise.com</p>
+            </div>
+            <div class="footer-section">
+                <h4>Follow Us</h4>
+                <div class="social-icons">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <hr style="border-color: rgba(255,255,255,0.1);">
+        <p>&copy; 2024 WealthWise - Finance Tracking. All rights reserved.</p>
+    </footer>
+
+
+<!-- Bootstrap JS and Dependencies -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<script>
+
+// GSAP Animations
+gsap.registerPlugin(ScrollTrigger);
+
+// Content Section Animation
+gsap.from(".left-half #sh1",{
+    y:100,
+    opacity:0,
+    delay:0.5,
+    duration:0.9,
+    stagger:0.3
+});
+
+gsap.from(".left-half #sh2",{
+    y:100,
+    opacity:0,
+    delay:0.9,
+    duration:0.9,
+    stagger:0.3
+});
+gsap.from(".left-half #sh3",{
+    y:100,
+    opacity:0,
+    delay:1.3,
+    duration:0.9,
+    stagger:0.3
+});
+
+
+        // Animate About Section
+        gsap.from(".about-text p, .additional-images img", {
+            scrollTrigger: {
+                trigger: ".about-section",
+                start: "top 80%",
+                toggleActions: "play none none reverse"
+            },
+            y: 50,
+            opacity: 0,
+            duration: 1,
+            stagger: 0.3
+        });
+
+        gsap.from(".about-image img", {
+            scrollTrigger: {
+                trigger: ".about-section",
+                start: "top 80%",
+                toggleActions: "play none none reverse"
+            },
+            scale: 0.8,
+            opacity: 0,
+            duration: 1,
+            delay: 0.5
+        });
+
+        // Animate Services Section
+        gsap.from(".service-card", {
+            scrollTrigger: {
+                trigger: ".services-section",
+                start: "top 80%",
+                toggleActions: "play none none reverse"
+            },
+            y: 50,
+            opacity: 0,
+            duration: 1,
+            stagger: 0.2
+        });
+
+        // Animate Team Section
+        gsap.from(".team-card", {
+            scrollTrigger: {
+                trigger: ".team-section",
+                start: "top 80%",
+                toggleActions: "play none none reverse"
+            },
+            scale: 0.8,
+            opacity: 0,
+            duration: 1,
+            stagger: 0.2
+        });
+
+        // Animate Future Features Section
+        gsap.from(".future-container li", {
+            scrollTrigger: {
+                trigger: ".future-section",
+                start: "top 80%",
+                toggleActions: "play none none reverse"
+            },
+            y: 50,
+            opacity: 0,
+            duration: 1,
+            stagger: 0.2
+        });
+
+        // Animate Footer
+        gsap.from("footer .footer-section", {
+            scrollTrigger: {
+                trigger: "footer",
+                start: "top 80%",
+                toggleActions: "play none none reverse"
+            },
+            y: 50,
+            opacity: 0,
+            duration: 1,
+            stagger: 0.3
+        });
+
+</script>
+
+</body>
+</html>

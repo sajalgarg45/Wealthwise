@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Loan EMI Calculator</title>
+    <link rel="stylesheet" href="EMI.CSS">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Font style */
+@import url('https://fonts.googleapis.com/css2?family=New+Amsterdam&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
+
+/* Default */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Ubuntu", sans-serif;
+}
+
+/* Main Body */
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: #1b1b1b;
+    margin: 25px;
+}
+
+/* Main container */
+.container {
+    width: 70%;
+    margin: 0 auto;
+    padding: 30px;
+    border-radius: 30px;
+    background-color: grey;
+}
+
+/* Input container */
+.input-field {
+    background-color: #b9b6b6;
+    border-radius: 30px;
+    padding: 15px;
+}
+
+/* heading tag */
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: rgb(7, 7, 7);
+}
+
+/* Input container */
+.input-container {
+    display: flex;
+    flex-direction: column; /* Stack input fields vertically */
+    align-items: center;
+    margin-bottom: 15px;
+    background-color: #555;
+    border-radius: 30px;
+    padding: 10px;
+}
+
+.input-container label {
+    color: rgb(241, 174, 50);
+    margin-bottom: 5px;
+}
+
+input[type="number"] {
+    width: 80%; /* Adjust width for better alignment */
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 25px;
+    border: 1px solid #ccc;
+    background-color: #222;
+    color: white;
+}
+
+.tenure-type {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.tenure-type input {
+    color: white;
+    accent-color: orange;
+}
+
+/* calculate box */
+button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: orange;
+    color: black;
+    font-size: 18px;
+    border-radius: 25px;
+    border: 2px solid black;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+button:hover {
+    background-color: #e07b00; /* Darker orange */
+}
+
+/* Result container */
+.result-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    gap: 20px;
+    padding: 20px;
+    background-color: grey;
+    border-radius: 25px;
+}
+
+.result-box {
+    width: 160px;
+    height: 180px;
+    padding: 30px;
+    border-radius: 25px;
+    text-align: center;
+    background-color: #333;
+    color: orange;
+}
+
+.pie-chart-box {
+    width: 28%;
+}
+
+.amortization-schedule {
+    margin-top: 25px;
+    background-color: #333;
+    border-radius: 25px;
+    padding: 10px;
+    color: white;
+    text-align: center;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+thead th {
+    background-color: orange;
+    color: black;
+    border-radius: 20px;
+    padding: 10px;
+}
+
+tbody td {
+    text-align: center;
+    padding: 8px;
+    border: 1px solid #666;
+    color: white;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #333;
+}
+
+    </style>
+</head>
+
+<body>
+    <div class="container"> <!-- Main container -->
+
+        <div class="input-field"> <!-- Input container -->
+        
+            <h2>EMI CALCULATOR</h2>
+        
+        <div class="input-container"> <!-- Amount fields -->
+            <label for="amount">Amount (₹)</label>
+            <input type="number" id="amount">
+        </div>
+        
+        <div class="input-container"> <!-- Interest Rate fields -->
+            <label for="interestRate">Interest Rate (%)</label>
+            <input type="number" id="interestRate">
+        </div>
+        
+        <div class="input-container"> <!-- Tenure fields -->
+            <label for="tenure">Tenure</label>
+            <input type="number" id="tenure">
+            <label for="tenureType" class="tenure-type">
+                <input type="radio" id="tenureTypeYears" name="tenureType" value="years"> Years
+                <input type="radio" id="tenureTypeMonths" name="tenureType" value="months" checked> Months
+            </label>
+        </div>
+        <button onclick="calculateEMI()">Calculate</button> <!-- Calculate button -->
+        
+        </div>
+
+        <div class="result-container"> <!-- Result section -->
+            
+            <div class="result-box"> <!-- Monthly Payment box -->
+                <h3>Monthly Payment</h3>
+                <p id="monthlyPayment">₹ 0</p>
+            </div>
+            
+            <div class="result-box"> <!-- Total Interest Payable box -->
+                <h3>Total Interest Payable</h3>
+                <p id="totalInterest">₹ 0</p>
+            </div>
+            
+            <div class="result-box"> <!-- Total Payment box -->
+                <h3>Total Payment (Principal + Interest)</h3>
+                <p id="totalPayment">₹ 0</p>
+            </div>
+            
+            <div class="result-box pie-chart-box"> <!-- Payment Pie Chart box -->
+                <canvas id="paymentPieChart"></canvas>
+            </div>
+        
+        </div>
+
+        <div class="amortization-schedule"> <!-- Amortization Schedule section -->
+            <h3>Amortization Schedule</h3>
+            
+            <table>
+                
+                <thead> <!-- Default Table header -->
+                    <tr>
+                        <th>Month</th>
+                        <th>Principal (A)</th>
+                        <th>Interest (B)</th>
+                        <th>Total (A + B)</th>
+                        <th>Balance</th>
+                        <th>Loan Paid Till Date</th>
+                    </tr>
+                </thead>
+                
+                <tbody id="amortizationTable">
+                    <!-- EMI rows will be inserted here -->
+                </tbody>
+            
+            </table>
+        </div>
+    
+    </div> <!-- End of Main container -->
+    
+<script src="EMI.js"></script>
+<script>
+    let chartInstance = null;  // Declare a variable to store the chart instance
+
+function calculateEMI() {
+    let amount = parseFloat(document.getElementById('amount').value);
+    let interestRate = parseFloat(document.getElementById('interestRate').value) / 12 / 100;
+    let tenure = parseInt(document.getElementById('tenure').value);
+    let tenureType = document.querySelector('input[name="tenureType"]:checked').value;
+
+    if (tenureType === 'years') {
+        tenure *= 12; // Convert years to months
+    }
+
+    let emi = (amount * interestRate * Math.pow(1 + interestRate, tenure)) / (Math.pow(1 + interestRate, tenure) - 1);
+    let totalPayment = emi * tenure;
+    let totalInterest = totalPayment - amount;
+
+    document.getElementById('monthlyPayment').innerText = `₹ ${emi.toFixed(2)}`;
+    document.getElementById('totalInterest').innerText = `₹ ${totalInterest.toFixed(2)}`;
+    document.getElementById('totalPayment').innerText = `₹ ${totalPayment.toFixed(2)}`;
+
+    // Destroy previous chart instance if it exists
+    if (chartInstance) {
+        chartInstance.destroy();
+    }
+
+    // Create a new Pie Chart
+    let ctx = document.getElementById('paymentPieChart').getContext('2d');
+    chartInstance = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['Principal', 'Interest'],
+            datasets: [{
+                data: [amount, totalInterest],
+                backgroundColor: ['#28a745', '#f39c12'],
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            return `${tooltipItem.label}: ₹ ${tooltipItem.raw.toFixed(2)}`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+// Update Amortization Schedule
+    let amortizationTable = document.getElementById('amortizationTable');
+    amortizationTable.innerHTML = ''; // Clear previous data
+
+    let balance = amount;
+    for (let i = 1; i <= tenure; i++) {
+        let interest = balance * interestRate;
+        let principal = emi - interest;
+        balance -= principal;
+
+        let row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${i}</td>
+            <td>₹ ${principal.toFixed(2)}</td>
+            <td>₹ ${interest.toFixed(2)}</td>
+            <td>₹ ${emi.toFixed(2)}</td>
+            <td>₹ ${balance.toFixed(2)}</td>
+            <td>${((amount - balance) / amount * 100).toFixed(2)}%</td>
+        `;
+        amortizationTable.appendChild(row);
+    }
+}
+
+// Add event listeners to update the EMI calculation in real-time
+document.getElementById('amount').addEventListener('input', calculateEMI);
+document.getElementById('interestRate').addEventListener('input', calculateEMI);
+document.getElementById('tenure').addEventListener('input', calculateEMI);
+document.querySelectorAll('input[name="tenureType"]').forEach(element => {
+    element.addEventListener('change', calculateEMI);
+});
+
+// Initial call to populate with default values
+calculateEMI();
+
+</script>
+</body>
+</html>

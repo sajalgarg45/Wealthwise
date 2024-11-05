@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mutual Fund Investment</title>
+    <style>
+        body.light-mode {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        body.dark-mode {
+            background-color: #333;
+            color: #f0f0f0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.5s ease;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background-color: #2980b9;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .theme-toggle:hover {
+            background-color: #3498db;
+            transform: scale(1.05);
+        }
+
+        .filter-container {
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            background-color: #34495e;
+        }
+
+        .filter-option {
+            display: flex;
+            align-items: center;
+            margin: 5px;
+        }
+
+        .filter-option input {
+            margin-right: 5px;
+        }
+
+        .fund-container {
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            transition: padding 0.5s ease;
+        }
+
+        .fund-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            width: 85%;
+            margin-top: 20px;
+        }
+
+        .fund-item {
+            background-color: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 380px;
+            border: 1px solid #ddd;
+        }
+
+        .fund-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .fund-item img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .fund-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%; 
+}
+
+        .fund-details h3 {
+            margin: 0;
+            font-size: 22px;
+            color: #2c3e50;
+        }
+
+        .fund-details p {
+            margin: 8px 0;
+            color: #7f8c8d;
+        }
+
+        .fund-details .type {
+            font-style: italic;
+            color: #2980b9;
+        }
+
+        .fund-details .nav {
+            font-weight: bold;
+            color: #27ae60;
+            margin-bottom: 10px;
+        }
+
+        .fund-details .btn {
+    margin-top: auto;
+    background-color: #27ae60;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.fund-details .btn:hover {
+    background-color: #2ecc71;
+}
+
+        .loader {
+            text-align: center;
+            padding: 50px;
+            font-size: 24px;
+            color: #7f8c8d;
+        }
+
+        .dark-mode header {
+            background-color: #000;
+        }
+
+        .dark-mode .fund-item {
+            background-color: #333;
+            color: white;
+        }
+
+        .dark-mode .fund-item .fund-details h3 {
+            color: white;
+        }
+
+        .dark-mode .fund-details .nav {
+            color: #2ecc71;
+        }
+
+        .dark-mode .btn {
+            background-color: #e74c3c;
+        }
+
+        .dark-mode .btn:hover {
+            background-color: #c0392b;
+        }
+
+        @media screen and (max-width: 768px) {
+            .fund-container {
+                flex-direction: column;
+            }
+            
+        }
+    </style>
+</head>
+
+<body class="light-mode">
+    <header>
+        <h1>Invest Online in Mutual Funds</h1>
+        <button id="themeToggle" class="theme-toggle">🌙</button>
+    </header>
+
+    <div class="filter-container">
+        <div class="filter-option">
+            <input type="checkbox" class="filter-checkbox" data-type="Equity Fund">
+            <label>Equity Fund</label>
+        </div>
+        <div class="filter-option">
+            <input type="checkbox" class="filter-checkbox" data-type="Small Cap Fund">
+            <label>Small Cap Fund</label>
+        </div>
+        <div class="filter-option">
+            <input type="checkbox" class="filter-checkbox" data-type="Balanced Fund">
+            <label>Balanced Fund</label>
+        </div>
+        <div class="filter-option">
+            <input type="checkbox" class="filter-checkbox" data-type="Hybrid Fund">
+            <label>Hybrid Fund</label>
+        </div>
+        <div class="filter-option">
+            <input type="checkbox" class="filter-checkbox" data-type="Large Cap Fund">
+            <label>Large Cap Fund</label>
+        </div>
+    </div>
+
+    <div id="loader" class="loader">Loading Mutual Funds...</div>
+
+    <div class="fund-container">
+        <div class="fund-grid" id="fundGrid"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+    const fundGrid = document.getElementById('fundGrid');
+    const loader = document.getElementById('loader');
+    const checkboxes = document.querySelectorAll('.filter-checkbox');
+    const themeToggle = document.getElementById('themeToggle');
+    const body = document.body;
+
+    const mutualFundApis = [
+    { 
+                    name: 'Bandhan Bank Fund', 
+                    api: 'https://api.mfapi.in/mf/121279/latest', 
+                    type: 'Equity Fund', 
+                    img: 'https://www.goodreturns.in/img/2019/10/bandhanbank-1524819282-1572413256.jpg', 
+                    url: 'https://www.etmoney.com/mutual-funds/bandhan-banking-and-psu-debt-fund-direct-growth/17988' 
+                },
+                { 
+                    name: 'Nippon India Small Cap Fund', 
+                    api: 'https://api.mfapi.in/mf/118778/latest', 
+                    type: 'Small Cap Fund', 
+                    img: 'https://play-lh.googleusercontent.com/C1Yc0vmbDTLf4buYNJAN4oXw8x2CqgBKykRV8CwtnNPe1jk6tjFS7A6ia0UID107sek', 
+                    url: 'https://www.etmoney.com/mutual-funds/nippon-india-small-cap-fund-direct-growth/15749' 
+                },
+                { 
+                    name: 'ICICI Prudential Mutual Fund', 
+                    api: 'https://api.mfapi.in/mf/147345/latest', 
+                    type: 'Balanced Fund', 
+                    img: 'https://media.glassdoor.com/sqll/4148504/icici-prudential-mutual-fund-squarelogo-1661249726256.png', 
+                    url: 'https://www.etmoney.com/mutual-funds/icici-prudential-corporate-bond-fund-direct-plan-growth/15135' 
+                },
+                { 
+                    name: 'HDFC Balanced Advantage Fund', 
+                    api: 'https://api.mfapi.in/mf/118968/latest', 
+                    type: 'Balanced Fund', 
+                    img: 'https://www.hdfcfund.com/images/share-image.png', 
+                    url: 'https://www.etmoney.com/mutual-funds/hdfc-balanced-advantage-fund-direct-plan-growth/15622' 
+                },
+                { 
+                    name: 'Axis Bluechip Fund', 
+                    api: 'https://api.mfapi.in/mf/120465/latest', 
+                    type: 'Bluechip Fund', 
+                    img: 'https://www.orowealth.com/static/images/amcs/axis.png', 
+                    url: 'https://www.etmoney.com/mutual-funds/axis-bluechip-fund-direct-plan-growth/15249' 
+                },
+                { 
+                    name: 'SBI Equity Hybrid Fund', 
+                    api: 'https://api.mfapi.in/mf/119609/latest', 
+                    type: 'Hybrid Fund', 
+                    img: 'https://assets1.cleartax-cdn.com/clearsave/images/1599738119_sbi_mf_v4.png', 
+                    url: 'https://www.etmoney.com/mutual-funds/sbi-equity-hybrid-fund-direct-plan-growth/15782' 
+                },
+                { 
+                    name: 'Franklin India Flexi Cap Fund', 
+                    api: 'https://api.mfapi.in/mf/118535/latest', 
+                    type: 'Flexi Cap Fund', 
+                    img: 'https://assets1.cleartax-cdn.com/clearsave/images/1619718543_franklin.png', 
+                    url: 'https://www.etmoney.com/mutual-funds/franklin-india-flexi-cap-fund-direct-growth/15575' 
+                },
+                { 
+                    name: 'UTI Nifty Index Fund', 
+                    api: 'https://api.mfapi.in/mf/120716/latest', 
+                    type: 'Index Fund', 
+                    img: 'https://storage.googleapis.com/5paisa-prod-storage/11-04-2022/UTI.png', 
+                    url: 'https://www.etmoney.com/mutual-funds/uti-nifty-50-index-fund-direct-growth/15397' 
+                },
+                { 
+                    name: 'Mirae Asset Large Cap Fund', 
+                    api: 'https://api.mfapi.in/mf/118825/latest', 
+                    type: 'Large Cap Fund', 
+                    img: 'https://akm-img-a-in.tosshub.com/businesstoday/resource/market/amc-logo/mirae-asset-mutual-fund.png', 
+                    url: 'https://www.etmoney.com/mutual-funds/mirae-asset-large-cap-fund-direct-growth/16138' 
+                },
+                { 
+                    name: 'Kotak Emerging Equity Fund Direct-Growth', 
+                    api: 'https://api.mfapi.in/mf/119775/latest', 
+                    type: 'Emerging Equity Fund', 
+                    img: 'https://www.wealthzi.com/wp-content/uploads/2021/05/201710272032263929_MFs-growing-at-rate-of-15-per-cent-Kotak-Mutual-Fund_SECVPF.jpg', 
+                    url: 'https://www.etmoney.com/mutual-funds/kotak-emerging-equity-fund-direct-growth/16693' 
+                },
+                { 
+                    name: 'Aditya Birla Sun Life Credit Risk Fund', 
+                    api: 'https://api.mfapi.in/mf/134387/latest', 
+                    type: 'Emerging Equity Fund', 
+                    img: 'https://www.indiablooms.com/finance_pic/2016/birla-1473350863.jpg', 
+                    url: 'https://www.etmoney.com/mutual-funds/aditya-birla-sun-life-credit-risk-fund-direct-growth/29452' 
+                },
+                { 
+                    name: 'Bank of India Credit Risk Fund', 
+                    api: 'https://api.mfapi.in/mf/133868/latest', 
+                    type: 'Large Cap Fund', 
+                    img: 'https://economictimes.indiatimes.com/thumb/msid-112422532,width-1200,height-1200,resizemode-4,imgsize-13334/nfo-watch-bank-of-india-mutual-fund-launches-business-cycle-fund-nfo-to-open-on-july-25.jpg', 
+                    url: 'https://www.etmoney.com/mutual-funds/bank-of-india-credit-risk-fund-direct-growth/28987' 
+                },
+                { 
+                    name: 'Motilal Oswal Midcap Fund', 
+                    api: 'https://api.mfapi.in/mf/127042/latest', 
+                    type: 'Emerging Equity Fund', 
+                    img: 'https://www.valueresearchonline.com/content-assets/images/amc-logo/9054-motilal-oswal-2__BASE__.png', 
+                    url: 'https://www.etmoney.com/mutual-funds/motilal-oswal-midcap-fund-direct-growth/23602' 
+                },
+                { 
+                    name: 'Quant Flexi Cap Fund', 
+                    api: 'https://api.mfapi.in/mf/120843/latest', 
+                    type: 'Emerging Equity Fund', 
+                    img: 'https://my.fisdom.com/static/img/amc-logo/low-res/quant.png', 
+                    url: 'https://www.etmoney.com/mutual-funds/quant-flexi-cap-fund-direct-growth/16936' 
+                },
+                { 
+                    name: 'DSP India T.I.G.E.R. Fund', 
+                    api: 'https://api.mfapi.in/mf/119247/latest', 
+                    type: 'Emerging Equity Fund', 
+                    img: 'https://tarrakki-live.s3.amazonaws.com/media/amc_logos/38_qpq4Pnb.png', 
+                    url: 'https://www.etmoney.com/mutual-funds/dsp-india-tiger-the-infrastructure-growth-and-economic-reforms-fund-direct-growth/15977' 
+                },
+                { 
+                    name: 'Tata Small Cap Fund', 
+                    api: 'https://api.mfapi.in/mf/145206/latest', 
+                    type: 'Emerging Equity Fund', 
+                    img: 'https://images.dhan.co/Mutual_Fund/amc_images/light/5431.png', 
+                    url: 'https://www.etmoney.com/mutual-funds/tata-small-cap-fund-direct-growth/38470' 
+                },
+                { 
+                    name: 'Sundaram Small Cap Fund', 
+                    api: 'https://api.mfapi.in/mf/119589/latest', 
+                    type: 'Emerging Equity Fund', 
+                    img: 'https://static.paytmmoney.com/amc-logo/SNDRM.png', 
+                    url: 'https://www.etmoney.com/mutual-funds/sundaram-small-cap-fund-direct-growth/15679' 
+                },
+                { 
+                    name: 'JM Value Fund', 
+                    api: 'https://api.mfapi.in/mf/120486/latest', 
+                    type: 'Emerging Equity Fund', 
+                    img: 'https://res.cloudinary.com/stack-finance/image/upload/v1701157527/AMCs/JM_Financial_Mutual_Fund_vct0ig.png', 
+                    url: 'https://www.etmoney.com/mutual-funds/jm-value-fund-direct-plan-growth/16093' 
+                },
+                { 
+                    name: 'Union Small Cap Fund', 
+                    api: 'https://api.mfapi.in/mf/129649/latest', 
+                    type: 'Emerging Equity Fund', 
+                    img: 'https://res.cloudinary.com/stack-finance/image/upload/v1701157533/AMCs/Union_Asset_Management_Co._Pvt._Ltd._wgmhjv.png', 
+                    url: 'https://www.etmoney.com/mutual-funds/union-small-cap-fund-direct-growth/26380' 
+                },
+                { 
+                    name: 'Baroda BNP Paribas Midcap Fund', 
+                    api: 'https://api.mfapi.in/mf/150287/latest', 
+                    type: 'Emerging Equity Fund', 
+                    img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSA0Cchet5UU4SZ5kEUuUfWCZccweenmeztxaWkZvL7Jx9uWAiPMk01wCqYECeCOxzgD8U&usqp=CAU', 
+                    url: 'https://www.etmoney.com/mutual-funds/baroda-bnp-paribas-aqua-fof-direct-growth/41922' 
+                },
+                { 
+                    name: 'Mahindra Manulife Multi Cap Fund', 
+                    api: 'https://api.mfapi.in/mf/141226/latest', 
+                    type: 'Emerging Equity Fund', 
+                    img: 'https://zfunds-public.s3.ap-south-1.amazonaws.com/assets/amc_logos_v2/Mahindra%20Manulife%20Investment%20Management%20Private%20Limited.png', 
+                    url: 'https://www.etmoney.com/mutual-funds/mahindra-manulife-multi-cap-fund-direct-growth/34479' 
+                },
+                { 
+                    name: 'Parag Parikh Flexi Cap Fund', 
+                    api: 'https://api.mfapi.in/mf/122639/latest', 
+                    type: 'Emerging Equity Fund', 
+                    img: 'https://images.dhan.co/Mutual_Fund/amc_images/light/43539.png', 
+                    url: 'https://www.etmoney.com/mutual-funds/parag-parikh-flexi-cap-fund-direct-growth/19232' 
+                },
+                { 
+                    name: '360 ONE Focused Equity Fund', 
+                    api: 'https://api.mfapi.in/mf/131580/latest', 
+                    type: 'Emerging Equity Fund', 
+                    img: 'https://cms-assets.bajajfinserv.in/is/image/bajajfinance/assetone-logo?scl=1&fmt=png-alpha', 
+                    url: 'https://www.etmoney.com/mutual-funds/360-one-focused-equity-fund-direct-growth/27978' 
+                },
+                { 
+                    name: 'Canara Robeco Emerging Equities Fund', 
+                    api: 'https://api.mfapi.in/mf/118278/latest', 
+                    type: 'Emerging Equity Fund', 
+                    img: 'https://edufund-images.s3.ap-south-1.amazonaws.com/amc-logos-500x500/20Canara+Robeco+Mutual+Fund.jpg', 
+                    url: 'https://www.etmoney.com/mutual-funds/canara-robeco-emerging-equities-fund-direct-growth/16144' 
+                },
+                { 
+                    name: 'Quantum Long Term Equity Value Fund', 
+                    api: 'https://api.mfapi.in/mf/103490/latest', 
+                    type: 'Emerging Equity Fund', 
+                    img: 'https://www.orowealth.com/static/images/amcs/quantum.png', 
+                    url: 'https://www.etmoney.com/mutual-funds/quantum-long-term-equity-value-fund-direct-growth/2989' 
+                },
+                { 
+                    name: 'Navi Large & Midcap Fund', 
+                    api: 'https://api.mfapi.in/mf/135677/latest', 
+                    type: 'Emerging Equity Fund', 
+                    img: 'https://assets-netstorage.groww.in/mf-assets/logos/peerless_groww.png', 
+                    url: 'https://www.etmoney.com/mutual-funds/navi-large-and-midcap-fund-direct-growth/30777' 
+                },
+                 { 
+                    name: 'PGIM India Flexi Cap Fund', 
+                    api: 'https://api.mfapi.in/mf/133839/latest', 
+                    type: 'Emerging Equity Fund', 
+                    img: 'https://static.paytmmoney.com/amc-logo/DHFLP.png', 
+                    url: 'https://www.etmoney.com/mutual-funds/pgim-india-flexi-cap-fund-direct-growth/28980' 
+                },
+                { 
+                    name: 'WhiteOak Capital Ultra Short Duration Fund', 
+                    api: 'https://api.mfapi.in/mf/147311/latest', 
+                    type: 'Emerging Equity Fund', 
+                    img: 'https://cms-assets.bajajfinserv.in/is/image/bajajfinance/whiteoak-capital-mutual-fund-v1?scl=1&fmt=png-alpha', 
+                    url: 'https://www.etmoney.com/mutual-funds/whiteoak-capital-ultra-short-duration-fund-direct-growth/40416' 
+                }
+    ];
+
+    themeToggle.addEventListener('click', () => {
+        body.classList.toggle('dark-mode');
+        themeToggle.textContent = body.classList.contains('dark-mode') ? '☀️' : '🌙';
+    });
+
+    async function fetchFundData(fund) {
+        try {
+            const response = await fetch(fund.api);
+            const data = await response.json();
+            return {
+                name: fund.name,
+                nav: data.data[0].nav,
+                img: fund.img,
+                type: fund.type,
+                url: fund.url,
+            };
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            return null;
+        }
+    }
+
+    async function displayFunds() {
+        loader.style.display = 'block';
+        fundGrid.innerHTML = '';
+
+        const funds = await Promise.all(mutualFundApis.map(fetchFundData));
+        const filteredFunds = filterFunds(funds);
+
+        if (filteredFunds.length === 0) {
+            fundGrid.innerHTML = '<p style="text-align: center;">No funds found.</p>';
+        } else {
+            filteredFunds.forEach((fund) => {
+                if (fund) {
+                    const fundItem = document.createElement('div');
+                    fundItem.className = 'fund-item';
+                    fundItem.innerHTML = `
+                        <img src="${fund.img}" alt="${fund.name}">
+                        <div class="fund-details">
+                            <h3>${fund.name}</h3>
+                            <p class="type">${fund.type}</p>
+                            <p class="nav">NAV: ₹${fund.nav}</p>
+                            <a href="${fund.url}" class="btn" target="_blank">Invest Now</a>
+                        </div>
+                    `;
+                    fundGrid.appendChild(fundItem);
+                }
+            });
+        }
+
+        loader.style.display = 'none';
+    }
+
+    function filterFunds(funds) {
+        const selectedTypes = Array.from(checkboxes)
+            .filter(checkbox => checkbox.checked)
+            .map(checkbox => checkbox.dataset.type);
+
+        if (selectedTypes.length === 0) {
+            return funds;
+        }
+
+        return funds.filter(fund => selectedTypes.includes(fund.type));
+    }
+
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', displayFunds);
+    });
+
+    displayFunds();
+});
+
+    </script>
+</body>
+
+</html>

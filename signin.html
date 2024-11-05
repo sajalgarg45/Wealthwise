@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - Wealthwise</title>
+    <style>
+        /* Basic Styles for Sign-In Page */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #1b1b1b;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+        }
+        .signin-container {
+            text-align: center;
+            background-color: #2c2c2c;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            width: 300px;
+        }
+        .signin-container h2 {
+            margin-bottom: 20px;
+        }
+        .signin-container input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .signin-button, .signup-button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            background-color: #4285F4; /* Button color */
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        .signin-button:hover, .signup-button:hover {
+            background-color: #357ae8;
+        }
+        .toggle-auth {
+            margin-top: 15px;
+            color: #4285F4;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        #error-message {
+            color: red;
+            margin-top: 10px;
+            min-height: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="signin-container">
+        <h2 id="form-title">Sign In</h2>
+        <input type="email" id="email" placeholder="Email" required>
+        <input type="password" id="password" placeholder="Password" required>
+        <button class="signin-button" id="authBtn">Sign In</button>
+        <p class="toggle-auth" id="toggleAuth">Don't have an account? Sign Up</p>
+        <p id="error-message"></p>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDx2BYYUAWddTdLX1SeBzOH3ElB6UWdLJI",
+            authDomain: "wealthwise-5d034.firebaseapp.com",
+            projectId: "wealthwise-5d034",
+            storageBucket: "wealthwise-5d034.appspot.com",
+            messagingSenderId: "776977330004",
+            appId: "1:776977330004:web:50fc8d30902c83a40f22c1"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Get elements
+        const authBtn = document.getElementById('authBtn');
+        const toggleAuth = document.getElementById('toggleAuth');
+        const formTitle = document.getElementById('form-title');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const errorMessage = document.getElementById('error-message');
+
+        let isSignIn = true; // Toggle between Sign In and Sign Up
+
+        // Toggle between Sign In and Sign Up
+        toggleAuth.addEventListener('click', () => {
+            isSignIn = !isSignIn;
+            formTitle.textContent = isSignIn ? 'Sign In' : 'Sign Up';
+            authBtn.textContent = isSignIn ? 'Sign In' : 'Sign Up';
+            toggleAuth.textContent = isSignIn ? "Don't have an account? Sign Up" : "Already have an account? Sign In";
+            errorMessage.textContent = '';
+        });
+
+        // Authentication Button Click
+        authBtn.addEventListener('click', () => {
+            const email = emailInput.value.trim();
+            const password = passwordInput.value.trim();
+
+            // Clear previous error message
+            errorMessage.textContent = '';
+
+            // Basic validation
+            if (!email || !password) {
+                errorMessage.textContent = 'Please enter both email and password.';
+                return;
+            }
+
+            // Email format validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                errorMessage.textContent = 'Please enter a valid email address.';
+                return;
+            }
+
+            if (isSignIn) {
+                // Sign In
+                signInWithEmailAndPassword(auth, email, password)
+                    .then(() => {
+                        window.location.href = 'dashboard.html'; // Redirect to dashboard
+                    })
+                    .catch((error) => {
+                        handleAuthError(error);
+                    });
+            } else {
+                // Sign Up
+                createUserWithEmailAndPassword(auth, email, password)
+                    .then(() => {
+                        window.location.href = 'dashboard.html'; // Redirect to dashboard
+                    })
+                    .catch((error) => {
+                        handleAuthError(error);
+                    });
+            }
+        });
+
+        // Handle Authentication Errors
+        function handleAuthError(error) {
+            switch (error.code) {
+                case 'auth/invalid-email':
+                    errorMessage.textContent = 'Invalid email address.';
+                    break;
+                case 'auth/user-disabled':
+                    errorMessage.textContent = 'This user has been disabled.';
+                    break;
+                case 'auth/user-not-found':
+                    errorMessage.textContent = 'No user found with this email.';
+                    break;
+                case 'auth/wrong-password':
+                    errorMessage.textContent = 'Incorrect password.';
+                    break;
+                case 'auth/email-already-in-use':
+                    errorMessage.textContent = 'Email is already in use.';
+                    break;
+                case 'auth/weak-password':
+                    errorMessage.textContent = 'Password should be at least 6 characters.';
+                    break;
+                default:
+                    errorMessage.textContent = error.message;
+            }
+        }
+
+        // Optional: Redirect authenticated users directly to dashboard
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                window.location.href = 'dashboard.html';
+            }
+        });
+    </script>
+</body>
+</html>

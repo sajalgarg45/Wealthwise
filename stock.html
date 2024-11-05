@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Stocks</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="filters">
+            <h2>FILTERS</h2>
+            <label><input type="checkbox" value="Technology" onchange="filterByCategory()"> Technology</label>
+            <label><input type="checkbox" value="Financial" onchange="filterByCategory()"> Financial</label>
+            <label><input type="checkbox" value="Retail" onchange="filterByCategory()"> Retail</label>
+            <label><input type="checkbox" value="Automobile" onchange="filterByCategory()"> Automobile</label>
+        </div>
+
+
+        <div class="stocks-container">
+            <div class="stocks-header">
+                <h2>ALL STOCKS</h2>
+                <input type="text" id="search" placeholder="Search Stocks..." onkeyup="filterStocks()">
+                <button onclick="updateAllStocks()">Fetch Stocks</button>
+            </div>
+
+            <table class="stock-table">
+                <thead>
+                    <tr>
+                        <th>GRAPH</th>
+                        <th>NAME</th>
+                        <th>PRICE</th>
+                        <th>CHANGE</th>
+                    </tr>
+                </thead>
+
+                <tbody id="stocks">
+                    <tr class="stock-item" data-stock="AAPL" data-category="Technology">
+                        <td><canvas id="chart-AAPL" class="stock-graph"></canvas></td>
+                        <td class="stock-name">Apple</td>
+                        <td class="stock-price">₹0.00</td>
+                        <td class="stock-change">0.00%</td>
+                    </tr>
+                    <tr class="stock-item" data-stock="GOOGL" data-category="Technology">
+                        <td><canvas id="chart-GOOGL" class="stock-graph"></canvas></td>
+                        <td class="stock-name">Google</td>
+                        <td class="stock-price">₹0.00</td>
+                        <td class="stock-change">0.00%</td>
+                    </tr>
+                    <tr class="stock-item" data-stock="MSFT" data-category="Technology">
+                        <td><canvas id="chart-MSFT" class="stock-graph"></canvas></td>
+                        <td class="stock-name">Microsoft</td>
+                        <td class="stock-price">₹0.00</td>
+                        <td class="stock-change">0.00%</td>
+                    </tr>
+                    <tr class="stock-item" data-stock="TSLA" data-category="Automobile">
+                        <td><canvas id="chart-TSLA" class="stock-graph"></canvas></td>
+                        <td class="stock-name">Tesla</td>
+                        <td class="stock-price">₹0.00</td>
+                        <td class="stock-change">0.00%</td>
+                    </tr>
+                    <tr class="stock-item" data-stock="F" data-category="Automobile">
+                        <td><canvas id="chart-F" class="stock-graph"></canvas></td>
+                        <td class="stock-name">Ford</td>
+                        <td class="stock-price">₹0.00</td>
+                        <td class="stock-change">0.00%</td>
+                    </tr>
+                    <tr class="stock-item" data-stock="AMZN" data-category="Retail">
+                        <td><canvas id="chart-AMZN" class="stock-graph"></canvas></td>
+                        <td class="stock-name">Amazon</td>
+                        <td class="stock-price">₹0.00</td>
+                        <td class="stock-change">0.00%</td>
+                    </tr>
+                    <tr class="stock-item" data-stock="NFLX" data-category="Retail">
+                        <td><canvas id="chart-NFLX" class="stock-graph"></canvas></td>
+                        <td class="stock-name">Netflix</td>
+                        <td class="stock-price">₹0.00</td>
+                        <td class="stock-change">0.00%</td>
+                    </tr>
+                    <tr class="stock-item" data-stock="NVDA" data-category="Technology">
+                        <td><canvas id="chart-NVDA" class="stock-graph"></canvas></td>
+                        <td class="stock-name">NVIDIA</td>
+                        <td class="stock-price">₹0.00</td>
+                        <td class="stock-change">0.00%</td>
+                    </tr>
+                    <tr class="stock-item" data-stock="V" data-category="Financial">
+                        <td><canvas id="chart-V" class="stock-graph"></canvas></td>
+                        <td class="stock-name">Visa</td>
+                        <td class="stock-price">₹0.00</td>
+                        <td class="stock-change">0.00%</td>
+                    </tr>
+                    <tr class="stock-item" data-stock="PYPL" data-category="Financial">
+                        <td><canvas id="chart-PYPL" class="stock-graph"></canvas></td>
+                        <td class="stock-name">PayPal</td>
+                        <td class="stock-price">₹0.00</td>
+                        <td class="stock-change">0.00%</td>
+                    </tr>
+                    <tr class="stock-item" data-stock="BABA" data-category="Retail">
+                        <td><canvas id="chart-BABA" class="stock-graph"></canvas></td>
+                        <td class="stock-name">Alibaba</td>
+                        <td class="stock-price">₹0.00</td>
+                        <td class="stock-change">0.00%</td>
+                    </tr>
+                    <tr class="stock-item" data-stock="CSCO" data-category="Technology">
+                        <td><canvas id="chart-CSCO" class="stock-graph"></canvas></td>
+                        <td class="stock-name">Cisco</td>
+                        <td class="stock-price">₹0.00</td>
+                        <td class="stock-change">0.00%</td>
+                    </tr>
+                    <tr class="stock-item" data-stock="INTC" data-category="Technology">
+                        <td><canvas id="chart-INTC" class="stock-graph"></canvas></td>
+                        <td class="stock-name">Intel</td>
+                        <td class="stock-price">₹0.00</td>
+                        <td class="stock-change">0.00%</td>
+                    </tr>
+                    <tr class="stock-item" data-stock="ADBE" data-category="Technology">
+                        <td><canvas id="chart-ADBE" class="stock-graph"></canvas></td>
+                        <td class="stock-name">Adobe</td>
+                        <td class="stock-price">₹0.00</td>
+                        <td class="stock-change">0.00%</td>
+                    </tr>
+                    <tr class="stock-item" data-stock="ORCL" data-category="Technology">
+                        <td><canvas id="chart-ORCL" class="stock-graph"></canvas></td>
+                        <td class="stock-name">Oracle</td>
+                        <td class="stock-price">₹0.00</td>
+                        <td class="stock-change">0.00%</td>
+                    </tr>
+                    <tr class="stock-item" data-stock="SAP" data-category="Technology">
+                        <td><canvas id="chart-SAP" class="stock-graph"></canvas></td>
+                        <td class="stock-name">SAP</td>
+                        <td class="stock-price">₹0.00</td>
+                        <td class="stock-change">0.00%</td>
+                    </tr>
+                    <tr class="stock-item" data-stock="CRM" data-category="Technology">
+                        <td><canvas id="chart-CRM" class="stock-graph"></canvas></td>
+                        <td class="stock-name">Salesforce</td>
+                        <td class="stock-price">₹0.00</td>
+                        <td class="stock-change">0.00%</td>
+                    </tr>
+                </tbody>
+                
+            </table>
+        </div>
+    </div>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #181818;
+            background: linear-gradient(90deg, rgba(24, 24, 24, 1) 0%, rgba(62, 66, 63, 1) 35%, rgba(36, 32, 32, 1) 100%);
+            color: #f8f9fa;
+        }
+        .container {
+            display: flex;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .filters {
+            background: #333;
+            padding: 20px;
+            width: 250px;
+            height: auto;
+            border-radius: 20px;
+            box-shadow: 0 16px 32px rgba(118, 117, 117, 0.2);
+            margin-right: 20px;
+        }
+        .filters h2 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+        .filters label {
+            display: block;
+            margin-bottom: 10px;
+            margin-top: 20px;
+            font-size: 1.1em;
+            font-weight: 500;
+            color: #d8d8d8;
+        }
+        .stocks-container {
+            flex-grow: 1;
+            background: #222;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .stocks-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .stocks-header h2 {
+            font-size: 1.5em;
+            margin: 0;
+            color: #ffffff;
+        }
+
+        .stocks-header input {
+            padding: 10px;
+            width: 250px;
+            border-radius: 10px;
+            border: 1px solid #555;
+            background: #333;
+            color: #f8f9fa;
+        }
+
+        .stocks-header button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .stocks-header button:hover {
+            background-color: #0056b3;
+        }
+
+        .stock-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #333;
+        }
+
+        .stock-table th,
+        .stock-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #444;
+            color: #f8f9fa;
+        }
+
+        .stock-table th {
+            background-color: #444;
+        }
+
+        .stock-graph {
+            width: 100px;
+            height: 50px;
+        }
+
+        .stock-change.positive {
+            color: #28a745;
+        }
+
+        .stock-change.negative {
+            color: #dc3545;
+        }
+    </style>
+
+    <script>
+        async function fetchExchangeRate() {
+    const url = 'https://api.exchangerate-api.com/v4/latest/USD'; 
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        return data.rates.INR; 
+    } catch (error) {
+        console.error('Error fetching exchange rate:', error);
+        return 1; 
+    }
+}
+
+async function fetchStockData(stockSymbol) {
+    const apiKey = 'SUHIZIB6KLLRO6NF';  
+    const url = `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${stockSymbol}&interval=1min&apikey=${apiKey}`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.Note || !data['Time Series (1min)']) {
+            console.error('API limit exceeded or invalid data', data.Note || data);
+            return { price: 'N/A', change: 'N/A', graphData: [] };
+        }
+
+        const timeSeries = data['Time Series (1min)'];
+        const timePoints = Object.keys(timeSeries);
+        const latestTime = timePoints[0];
+        const previousTime = timePoints[1];
+
+        const latestPrice = parseFloat(timeSeries[latestTime]['4. close']);
+        const previousPrice = parseFloat(timeSeries[previousTime]['4. close']);
+        const change = ((latestPrice - previousPrice) / previousPrice) * 100;
+
+        const exchangeRate = await fetchExchangeRate();
+        const priceInINR = latestPrice * exchangeRate;
+
+        const graphData = timePoints.slice(0, 10).reverse().map(time => ({
+            time,
+            price: parseFloat(timeSeries[time]['4. close']) * exchangeRate,
+        }));
+
+        return { price: priceInINR, change, graphData };
+    } catch (error) {
+        console.error('Error fetching stock data:', error);
+        return { price: 'N/A', change: 'N/A', graphData: [] };
+    }
+}
+
+function updateStock(stockSymbol, price, change) {
+    const stockRow = document.querySelector(`.stock-item[data-stock="${stockSymbol}"]`);
+    if (!stockRow) return;
+
+    const priceCell = stockRow.querySelector('.stock-price');
+    const changeCell = stockRow.querySelector('.stock-change');
+
+    if (price !== 'N/A') {
+        priceCell.textContent = `₹${price.toFixed(2)}`;
+        changeCell.textContent = `${change.toFixed(2)}%`;
+
+        if (change > 0) {
+            changeCell.classList.add('positive');
+            changeCell.classList.remove('negative');
+        } else {
+            changeCell.classList.add('negative');
+            changeCell.classList.remove('positive');
+        }
+    } else {
+        priceCell.textContent = 'N/A';
+        changeCell.textContent = 'N/A';
+        changeCell.classList.remove('positive', 'negative');
+    }
+}
+
+function updateGraph(stockSymbol, graphData) {
+    const chartElement = document.getElementById(`chart-${stockSymbol}`);
+    const ctx = chartElement.getContext('2d');
+
+    if (chartElement.chart) {
+        chartElement.chart.destroy(); 
+    }
+
+    const labels = graphData.map(data => data.time);
+    const prices = graphData.map(data => data.price);
+
+    chartElement.chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels,
+            datasets: [{
+                label: `${stockSymbol} Price (INR)`,
+                data: prices,
+                fill: false,
+                borderColor: '#007bff',
+                tension: 0.1,
+            }],
+        },
+        options: {
+            scales: {
+                x: { display: false },
+                y: { display: true },
+            },
+            responsive: true,
+            maintainAspectRatio: false,
+        },
+    });
+}
+
+async function updateAllStocks() {
+    const stocks = ['AAPL', 'GOOGL', 'MSFT', 'TSLA', 'F', 'AMZN', 'NFLX', 'FB', 'NVDA', 'V', 'PYPL', 'BABA', 'CSCO', 'INTC', 'ADBE', 'ORCL', 'SAP', 'CRM'];
+
+    for (const stockSymbol of stocks) {
+        const { price, change, graphData } = await fetchStockData(stockSymbol);
+
+        if (price !== 'N/A') {
+            updateStock(stockSymbol, price, change);
+            updateGraph(stockSymbol, graphData);
+        }
+    }
+}
+
+function filterStocks() {
+            const searchTerm = document.getElementById('search').value.toLowerCase();
+            const stockItems = document.querySelectorAll('.stock-item');
+
+            stockItems.forEach(stockItem => {
+                const stockName = stockItem.querySelector('.stock-name').textContent.toLowerCase();
+                if (stockName.includes(searchTerm)) {
+                    stockItem.style.display = '';
+                } else {
+                    stockItem.style.display = 'none';
+                }
+            });
+        }
+
+        function filterByCategory() {
+            const checkedCategories = Array.from(document.querySelectorAll('.filters input[type="checkbox"]:checked'))
+                .map(checkbox => checkbox.value);
+
+            const stockItems = document.querySelectorAll('.stock-item');
+            stockItems.forEach(stockItem => {
+                const category = stockItem.getAttribute('data-category');
+                if (checkedCategories.length === 0 || checkedCategories.includes(category)) {
+                    stockItem.style.display = '';
+                } else {
+                    stockItem.style.display = 'none';
+                }
+            });
+        }
+
+    </script>
+</body>
+
+</html>

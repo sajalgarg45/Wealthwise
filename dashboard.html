@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Dashboard - Wealthwise</title>
+
+    <style>
+        #totalBudget , #totalSpend , #budgetCount , #totalExpenses{
+
+            font-size:30px;
+        }
+        /* GENERAL STYLES */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            height: 100vh;
+            background-color: white;
+            box-sizing: border-box; 
+        }
+        *,
+        *::before,
+        *::after {
+            box-sizing: inherit;
+        }
+
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 20%;
+            background: #2d513c; /* Dark background for sidebar */
+            padding: 10px;
+            color: #fff; /* White text color */
+            box-shadow: 2px 0 5px rgba(0,0,0,0.3);
+            overflow-y: auto;
+            transition: width 0.3s ease; /* Smooth width transition if needed in future */
+        }
+
+        .menu {
+            list-style: none;
+            padding: 5px;
+        }
+
+        .menu li {
+            position: relative; /* For dropdown positioning */
+            margin: 20px 0;
+            /* Removed padding here to move it to the anchor tag */
+        }
+
+        .menu li a {
+            text-decoration: none;
+            color: #ffffff; /* Light grey text color */
+            font-size: 17px;
+            cursor: pointer;
+            font-weight: bolder;
+            display: flex;
+            align-items: center;
+            gap: 10px; /* Adjusted gap */
+            padding: 10px; /* Consistent padding */
+            border-radius: 8px; /* Apply border-radius here */
+            transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transitions */
+        }
+
+        /* Adjusted gap for submenu items */
+        .menu li .submenu li a {
+            display: flex;
+            align-items: center;
+            gap: 10px; /* Adjusted gap */
+        }
+
+        /* Hover State */
+        .menu li a:hover {
+            color: #c0d985; /* White text on hover */
+            background-color: #2d513c; /* Dark background on hover */
+            /* Removed padding change to prevent size alteration */
+        }
+
+        /* Active State */
+        .menu li a.active {
+            color: #c0d985;
+            background-color: #2d513c; /* Same as hover for consistency */
+        }
+
+        /* Dropdown Menu Styles */
+        .menu li.has-submenu > a {
+            justify-content: space-between;
+        }
+
+        .menu li.has-submenu > a .submenu-icon {
+            font-size: 12px;
+            transition: transform 0.3s;
+        }
+
+        .menu li.has-submenu.open > a .submenu-icon {
+            transform: rotate(180deg);
+        }
+
+        .menu li .submenu {
+            list-style: none;
+            padding-left: 20px; /* Indent submenu items */
+            margin-top: 10px;
+            display: none;
+        }
+
+        .menu li.open > .submenu {
+            display: block;
+        }
+
+        .menu li .submenu li {
+            margin: 5px 0;
+        }
+
+        .menu li .submenu li a {
+            font-size: 15px;
+            padding: 8px;
+            color: #ffffff;
+            font-weight: normal;
+            display: block;
+            border-radius: 8px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .menu li .submenu li a:hover {
+            background-color: #2d513c;
+            color: #c0d985;
+        }
+
+        /* HEADER */
+        .main-content {
+            width: 80%; /* Adjusted width to accommodate sidebar */
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #c3d5a9;
+            color: black; /* White text color */
+            transition: width 0.3s ease; /* Smooth transition if needed */
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            font-weight: bolder;
+        }
+        .profile-picture img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        /* CONTENT */
+        .dashboard, .budgets, .expenses {
+            display: none;
+        }
+        .active {
+            display: block;
+        }
+        .stats, .charts, .budget-graphs, .additional-sections {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        .stats div, .charts div, .budget-graphs div, .additional-sections div {
+            background: white; /* Dark grey background for divs */
+
+            padding: 15px;
+            border-radius: 20px;
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+            transition: box-shadow 0.3s, transform 0.3s;
+
+        }
+        .stats div:hover, .charts div:hover, .budget-graphs div:hover, .additional-sections div:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+            transform: translateY(-5px);
+        }
+
+        /* CHARTS */
+        .charts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+        }
+
+        .charts .chart-container {
+            flex: 1 1 45%; /* Allows two charts per row with some gap */
+            background-color: white; /* Dark grey for chart background */
+            padding: 10px;
+            border-radius: 10px;
+            box-sizing: border-box;
+            min-width: 300px; /* Ensures charts don't get too small */
+        }
+
+        .charts .chart-container h3 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .charts .chart-container canvas {
+            width: 100% !important;
+            height: 250px !important; /* Fixed height for consistency */
+        }
+
+        @media (max-width: 768px) {
+            .charts .chart-container {
+                flex: 1 1 100%; /* Stacks charts vertically on smaller screens */
+            }
+        }
+
+        /* RECENT EXPENSES & ADDITIONAL SECTIONS */
+        .additional-sections {
+            width: 100%;
+        }
+        .recent-expenses, .viral-news, .money-saving-tips {
+            flex: 1;
+            min-width: 200px;
+        }
+        .recent-expenses ul {
+            list-style: none;
+            padding: 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .recent-expenses li {
+            background-color: #A5B68D;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .section-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .section-container h3 {
+            margin-bottom: 10px;
+        }
+        .section-container button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #c08240; /* Orange background for buttons */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease; /* Smooth transition */
+        }
+        .section-container button:hover {
+            background-color: #a5a5a5; /* Lighter color on hover */
+        }
+
+        /* FORM */
+        .form-container {
+            margin-bottom: 20px;
+            background-color: #59755a; /* Dark background for form */
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 500px;
+        }
+        .form-container input, .form-container button {
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #666;
+            width: 100%;
+            transition: border 0.3s ease; /* Smooth transition */
+        }
+        .form-container input:focus, .form-container button:focus {
+            border: 1px solid #c08240; /* Highlight border on focus */
+            outline: none;
+        }
+        .form-container button {
+            background-color: #c08240; /* Orange background for buttons */
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease; /* Smooth transition */
+        }
+        .form-container button:hover {
+            background-color: #a5a5a5; /* Lighter color on hover */
+        }
+
+        /* BUDGET ITEM */
+        .budget-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px; /* Adjust the gap between grid items as needed */
+            padding: 10px;
+        }
+
+        .budget-item {
+            background-color: white; /* Dark background for budget items */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            transition: box-shadow 0.3s, transform 0.3s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .budget-item:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+            transform: translateY(-5px);
+        }
+        .budget-item .chart-container {
+            width: 100%;
+            height: 200px;
+            background-color: white; /* Dark grey background for chart containers */
+            display: flex;
+            flex-direction: column; /* Added */
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            cursor: pointer;
+            position: relative; /* Added */
+            overflow: hidden; /* Added */
+        }
+        .budget-item .chart-container h4 {
+            margin: 0;
+            padding: 5px;
+            background-color: rgba(0,0,0,0.5); /* Semi-transparent background */
+            color: #fff;
+            width: 100%;
+            text-align: center;
+            position: absolute;
+            top: 0;
+        }
+        .budget-item .chart-container canvas {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: contain;
+        }
+
+        /* Budget Item Buttons */
+        .budget-buttons {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+        }
+
+        .budget-buttons button {
+            padding: 10px;
+            background-color: #c13131; /* Orange background for buttons */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease; /* Smooth transition */
+            flex: 1;
+            margin: 0 5px;
+        }
+
+        .budget-buttons button:hover {
+            background-color: #a5a5a5; /* Lighter color on hover */
+        }
+
+        .edit-budget-btn {
+            background-color: #4CAF50; /* Green for edit */
+        }
+
+        .edit-budget-btn:hover {
+            background-color: #45a049; /* Darker green on hover */
+        }
+
+        .delete-budget-btn {
+            background-color: #f44336; /* Red for delete */
+        }
+
+        .delete-budget-btn:hover {
+            background-color: #da190b; /* Darker red on hover */
+        }
+
+        @media (max-width: 768px) {
+            .budget-container {
+                grid-template-columns: 1fr; /* Single column on smaller screens */
+            }
+        }
+
+        /* EXPENSE TABLE */
+        .expense-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .expense-table th, .expense-table td {
+            padding: 10px;
+            border-bottom: 1px solid #666;
+            text-align: left;
+        }
+        .expense-table th {
+            background-color: white; /* Dark grey for table header */
+        }
+        .expense-table td button {
+            margin-right: 5px;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease; /* Smooth transition */
+        }
+        .expense-table .edit-btn {
+            background-color: #4CAF50; /* Green for edit */
+            color: white;
+        }
+        .expense-table .edit-btn:hover {
+            background-color: #45a049; /* Darker green on hover */
+        }
+        .expense-table .delete-btn {
+            background-color: #f44336; /* Red for delete */
+            color: white;
+        }
+        .expense-table .delete-btn:hover {
+            background-color: #da190b; /* Darker red on hover */
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 60px;
+            transition: opacity 0.3s ease; /* Smooth transition for modal */
+        }
+        .modal-content {
+            background-color: #444; /* Dark background for modal */
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 20px;
+            color: #fff; /* White text color */
+            position: relative;
+            transition: transform 0.3s ease, opacity 0.3s ease; /* Smooth transition */
+            transform: translateY(-50px);
+            opacity: 0;
+        }
+        .modal.show .modal-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .close {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 25px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease; /* Smooth transition */
+        }
+        .close:hover,
+        .close:focus {
+            color: #fff; /* White close button on hover */
+            text-decoration: none;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- Side Navbar -->
+    <div class="sidebar">     
+        <div class="logo"><img src="logo.png" height="75px" width="200px" alt="Logo"></div>  <!-- logo -->
+        <ul class="menu">
+            <li><a onclick="showPage(event, 'dashboard')" class="active">
+                <!-- Dashboard Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M8 9l3 3l-3 3" /><path d="M13 15l3 0" /><path d="M4 4m0 4a4 4 0 0 1 4 -4h8a4 4 0 0 1 4 4v8a4 4 0 0 1 -4 4h-8a4 4 0 0 1 -4 -4z" /></svg> DASHBOARD</a></li>
+            <li><a onclick="showPage(event, 'budgets')">
+                <!-- Budgets Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M21 15h-2.5c-.398 0 -.779 .158 -1.061 .439c-.281 .281 -.439 .663 -.439 1.061c0 .398 .158 .779 .439 1.061c.281 .281 .663 .439 1.061 .439h1c.398 0 .779 .158 1.061 .439c.281 .281 .439 .663 .439 1.061c0 .398 -.158 .779 -.439 1.061c-.281 .281 -.663 .439 -1.061 .439h-2.5" /><path d="M19 21v1m0 -8v1" /><path d="M13 21h-7c-.53 0 -1.039 -.211 -1.414 -.586c-.375 -.375 -.586 -.884 -.586 -1.414v-10c0 -.53 .211 -1.039 .586 -1.414c.375 -.375 .884 -.586 1.414 -.586h2m12 3.12v-1.12c0 -.53 -.211 -1.039 -.586 -1.414c-.375 -.375 -.884 -.586 -1.414 -.586h-2" /><path d="M16 10v-6c0 -.53 -.211 -1.039 -.586 -1.414c-.375 -.375 -.884 -.586 -1.414 -.586h-4c-.53 0 -1.039 .211 -1.414 .586c-.375 .375 -.586 .884 -.586 1.414v6m8 0h-8m8 0h1m-9 0h-1" /><path d="M8 14v.01" /><path d="M8 17v.01" /><path d="M12 13.99v.01" /><path d="M12 17v.01" /></svg> BUDGETS</a></li>
+            <li><a onclick="showPage(event, 'expenses')"> 
+                <!-- Expenses Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 21h-9a3 3 0 0 1 -3 -3v-1h10v2a2 2 0 0 0 4 0v-14a2 2 0 1 1 2 2h-2m2 -4h-11a3 3 0 0 0 -3 3v11" /><path d="M9 7l4 0" /><path d="M9 11l4 0" /></svg> EXPENSES</a></li>
+            <li class="has-submenu"><a href="#" onclick="toggleSubmenu(event)">
+                <!-- Calculator Icon -->
+                <div style="display: flex; align-items: center; gap: 10px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 3m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z" /><path d="M8 7m0 1a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1v1a1 1 0 0 1 -1 1h-6a1 1 0 0 1 -1 -1z" /><path d="M8 14l0 .01" /><path d="M12 14l0 .01" /><path d="M16 14l0 .01" /><path d="M8 17l0 .01" /><path d="M12 17l0 .01" /><path d="M16 17l0 .01" /></svg>CALCULATOR
+                </div>
+                    <span class="submenu-icon">&#9662;</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="EMI.html" target="_blank">
+                        <!-- EMI Calculator Icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M18 5h-13" /><path d="M18 5a7 7 0 0 1 -7 7" /><path d="M11 12h-5" /><path d="M18 19l-13 0" /><path d="M18 19a7 7 0 0 0 -7 -7" /><path d="M11 12l0 7" />
+                        </svg>
+                        EMI Calculator</a></li>
+                    <li><a href="SIP.html" target="_blank">
+                        <!-- SIP Calculator Icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 19l16 0" /><polyline points="4 15 8 9 12 11 16 6 20 10" />
+                        </svg>
+                        SIP Calculator</a></li>
+                </ul>
+            </li>
+            <li class="has-submenu">
+                <a href="#" onclick="toggleSubmenu(event)">
+                    <!-- Investments Icon -->
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 21a5.55 5.55 0 0 0 5.265 -3.795l.735 -2.205a8.775 8.775 0 0 1 8.325 -6h3.675" /><path d="M20 9v12" /><path d="M8 21v-3" /><path d="M12 21v-10" /><path d="M16 9.5v11.5" /><path d="M15 3h5v3h-5z" /><path d="M6 8l4 -3l2 2.5l-4 3l-1.8 -.5z" />
+                        </svg>
+                        INVESTMENTS
+                    </div>
+                    <span class="submenu-icon">&#9662;</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="loan.html" target="_blank">
+                        <!-- Loans Icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3v18" /><path d="M17 8a5 5 0 0 0 -10 0c0 3 5 4 5 7c0 1.657 -1.343 3 -3 3" /><path d="M12 13h3" />
+                        </svg>
+                        Loans</a></li>
+                    <li><a href="mutual.html" target="_blank">
+                        <!-- Mutual Funds Icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M11.5 3a8.5 8.5 0 1 0 8.5 8.5" /><path d="M19 3v8h-8" />
+                        </svg>
+                        Mutual Funds</a></li>
+                    <li><a href="stock.html" target="_blank">
+                        <!-- Stocks Icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 12m0 1a1 1 0 0 0 1 -1h4a1 1 0 0 0 1 1v6a1 1 0 0 0 -1 1h-4a1 1 0 0 0 -1 -1z" /><path d="M15 6m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v10a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" /><path d="M9 8m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v12a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" /><path d="M4 20h16" />
+                        </svg>
+                        Stocks</a></li>
+                    <li><a href="Crypto.html" target="_blank">
+                        <!-- Crypto Icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 6h6a3 3 0 0 1 0 6h-6" /><path d="M6 12h6a3 3 0 0 1 0 6h-6" /><path d="M8 6v12" /><path d="M8 6h-2" /><path d="M8 18h-2" /><path d="M9 9h3" /><path d="M9 15h3" />
+                        </svg>
+                        Crypto</a></li>
+                </ul>
+            </li>
+            <!-- New TIPS Dropdown Added Below Investments -->
+            <li class="has-submenu">
+                <a href="#" onclick="toggleSubmenu(event)">
+                    <!-- Tips Icon -->
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 18h6" /><path d="M12 15v3" /><path d="M14 11a4 4 0 0 1 -8 0c0 -2 1.667 -4 4 -4s4 2 4 4z" />
+                        </svg>
+                        TIPS
+                    </div>
+                    <span class="submenu-icon">&#9662;</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="news.html" target="_blank">
+                        <!-- Financial News Icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="12" r="9" /><line x1="12" y1="16" x2="12" y2="12" /><circle cx="12" cy="8" r="1" /></svg>
+                        Financial News</a></li>
+                    <li><a href="money_saving_tips.html" target="_blank">
+                        <!-- Money Saving Tips Icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 18h6" /><path d="M12 15v3" /><path d="M14 11a4 4 0 0 1 -8 0c0 -2 1.667 -4 4 -4s4 2 4 4z" /></svg>
+                        Tips to Save More Money</a></li>
+                </ul>
+            </li>
+            <li><a href="About.html" target="_blank">
+                <!-- About Us Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="12" r="9" /><line x1="12" y1="16" x2="12" y2="12" /><circle cx="12" cy="8" r="1" /></svg>
+                ABOUT US</a></li>
+            <li><a href="contact.html" target="_blank">
+                <!-- Contact Us Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 4h4l2 5l-2 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2" /></svg>
+                CONTACT US</a></li>
+            <li class="has-submenu">
+                <a href="#" onclick="toggleSubmenu(event)">
+                    <!-- Profile Icon -->
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="7" r="4" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /></svg>
+                        PROFILE
+                    </div>
+                    <span class="submenu-icon">&#9662;</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="Profile_Settings.html" target="_blank">
+                        <!-- Profile Settings Icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 9a3 3 0 1 0 0 6a3 3 0 0 0 0 -6" /><path d="M12 3v3" /><path d="M12 18v3" /><path d="M4.6 7l2.1 2.1" /><path d="M17.3 17.3l2.1 2.1" /><path d="M3 12h3" /><path d="M18 12h3" /><path d="M4.6 17l2.1 -2.1" /><path d="M17.3 6.7l2.1 -2.1" /></svg>
+                        Profile Settings</a></li>
+                    <li><a href="#" onclick="handleSignOut()">
+                        <!-- Log Out Icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" /><path d="M9 12h12l-3 -3" /><path d="M18 15l3 -3" /></svg>
+                        Log Out</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">    
+
+        <!-- Dashboard Page -->
+        <div id="dashboard" class="dashboard active">
+            
+            <div class="header">  <!-- header -->
+                <span>HI, Sajal 👋</span>
+                <span class="profile-picture"><img src="https://play-lh.googleusercontent.com/nn3jXKaItb-nryaw47o1-6diQ1OckdBnI_TO8MJB4GpMRB6pkmi1SjsVDihqpWqeC9xa" alt="Profile"></span>
+            </div>
+            
+            <div class="stats">  <!-- Stats -->
+                <div id="totalBudgetDiv"> 
+                    <h3>TOTAL BUDGET</h3>
+                    <div id="totalBudget">₹0</div>
+                </div>
+                <div id="totalSpendDiv">
+                    <h3>TOTAL SPEND</h3>
+                    <div id="totalSpend">₹0</div>
+                </div>
+                <div id="budgetCountDiv">
+                    <h3>NUMBER OF BUDGETS</h3>
+                    <div id="budgetCount">0</div>
+                </div>
+                <div id="totalExpensesDiv">
+                    <h3>NUMBER OF EXPENSES</h3>
+                    <div id="totalExpenses">0</div>
+                </div>
+            </div>
+            
+            <div class="charts">  <!-- Charts -->
+                <div class="chart-container">
+                    <h3>TOTAL SPEND VS REMAINING</h3>
+                    <canvas id="budgetExpenseChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>BUDGET AMOUNT VS SPENT</h3>
+                    <canvas id="budgetAmountChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- Recent Expenses and Additional Sections -->
+            <div class="additional-sections">
+                <!-- Recent Expenses -->
+                <div class="recent-expenses">
+                    <h3>RECENT EXPENSES</h3>
+                    <ul id="recentExpensesList">
+                        <!-- Last 5 expenses will be dynamically added here -->
+                    </ul>
+                </div>
+                
+                <!-- Viral News -->
+                <div class="viral-news" style="background-image: url(/news.JPG);">
+                        <h3>VIRAL NEWS</h3>
+                        <button onclick="window.location.href='viral_news.html'">Read More</button>
+                </div>
+                
+                <!-- Money Saving Tips -->
+                <div class="money-saving-tips" style="background-image: url(/tips.JPG);">
+                        <h3>MONEY SAVING TIPS</h3>
+                        <button onclick="window.location.href='money_saving_tips.html'">Get Tips</button>
+                </div>
+            </div>
+            
+            <div class="budget-graphs" id="budgetGraphs">
+                <!-- Dynamic budget divs will be inserted here -->
+            </div> 
+        
+        </div> <!-- Dashboard Page Ends -->
+
+
+        <!-- Budgets Page -->
+        <div id="budgets" class="budgets">
+            
+            <div class="header">  <!-- header -->
+                <span>MANAGE YOUR BUDGETS</span>
+                <span class="profile-picture"><img src="https://play-lh.googleusercontent.com/nn3jXKaItb-nryaw47o1-6diQ1OckdBnI_TO8MJB4GpMRB6pkmi1SjsVDihqpWqeC9xa" alt="Profile"></span>
+            </div>
+            
+            <div class="form-container">
+                <h3>ADD NEW BUDGET</h3>
+                <input type="text" id="newBudgetName" placeholder="BUDGET NAME">
+                <input type="number" id="newBudgetAmount" placeholder="BUDGET AMOUNT">
+                <button onclick="addBudget()">ADD BUDGET</button>
+            </div>
+            
+            <div class="budget-container" id="budgetList">
+                <!-- Budget items will be dynamically added here -->
+            </div>
+        
+        </div>
+
+
+        <!-- Expenses Page -->
+        <div id="expenses" class="expenses">
+            
+            <div class="header">  <!-- header -->
+                <span>TRACK YOUR EXPENSES</span>
+                <span class="profile-picture"><img src="https://play-lh.googleusercontent.com/nn3jXKaItb-nryaw47o1-6diQ1OckdBnI_TO8MJB4GpMRB6pkmi1SjsVDihqpWqeC9xa" alt="Profile"></span>
+            </div>
+            
+            <div class="expense-table">
+                <h3>ALL EXPENSES</h3>
+                <table id="expenseList">
+                    <tr>
+                        <th>NAME</th>
+                        <th>AMOUNT</th>
+                        <th>DATE</th>
+                        <th>BUDGET</th>
+                        <th>ACTIONS</th>
+                    </tr>
+                    <!-- Dynamic expense items will be added here -->
+                </table>
+            </div>
+        </div>
+    
+    </div>  <!-- Main Content Ends -->
+
+
+    <!-- Budget Details Modal -->
+    <div id="budgetDetailsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeBudgetDetailsModal()">&times;</span>
+            <h3>BUDGET DETAILS</h3>
+            <div id="budgetDetails">
+                <!-- Dynamic budget details will be added here -->
+            </div>
+            <h4>Add Expense</h4>
+            <input type="text" id="expenseName" placeholder="EXPENSE NAME">
+            <input type="number" id="expenseAmount" placeholder="EXPENSE AMOUNT">
+            <input type="date" id="expenseDate">
+            <button onclick="addExpense()">ADD EXPENSE</button>
+            <div class="expense-list">
+                <h4>EXPENSES:</h4>
+                <ul id="expenseDetailsList">
+                    <!-- Dynamic expense items will be added here -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Expense Modal -->
+    <div id="editExpenseModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditExpenseModal()">&times;</span>
+            <h3>EDIT EXPENSE</h3>
+            <input type="hidden" id="editExpenseIndex">
+            <input type="text" id="editExpenseName" placeholder="EXPENSE NAME">
+            <input type="number" id="editExpenseAmount" placeholder="EXPENSE AMOUNT">
+            <input type="date" id="editExpenseDate">
+            <button onclick="saveEditedExpense()">SAVE CHANGES</button>
+        </div>
+    </div>
+
+    <!-- Edit Budget Modal -->
+    <div id="editBudgetModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditBudgetModal()">&times;</span>
+            <h3>EDIT BUDGET</h3>
+            <input type="hidden" id="editBudgetIndex">
+            <input type="text" id="editBudgetName" placeholder="BUDGET NAME">
+            <input type="number" id="editBudgetAmount" placeholder="BUDGET AMOUNT">
+            <button onclick="saveEditedBudget()">SAVE CHANGES</button>
+        </div>
+    </div>
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Firebase Authentication and Sign-Out Script -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDx2BYYUAWddTdLX1SeBzOH3ElB6UWdLJI",
+            authDomain: "wealthwise-5d034.firebaseapp.com",
+            projectId: "wealthwise-5d034",
+            storageBucket: "wealthwise-5d034.appspot.com",
+            messagingSenderId: "776977330004",
+            appId: "1:776977330004:web:50fc8d30902c83a40f22c1"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Monitor authentication state
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                // If not authenticated, redirect to sign-in page
+                window.location.href = "signin.html";
+            } 
+            // else {
+            //     // Update the UI with user info
+            //     const userNameSpan = document.querySelector('.header span:first-child');
+            //     if (userNameSpan) {
+            //         userNameSpan.textContent = `Hi, ${user.displayName} 👋`;
+            //     }
+            //     const profilePicture = document.querySelector('.profile-picture img');
+            //     if (profilePicture && user.photoURL) {
+            //         profilePicture.src = user.photoURL;
+            //     }
+            // }
+        });
+
+        // Function to handle sign out
+        window.handleSignOut = () => {
+            signOut(auth).then(() => {
+                // Sign-out successful.
+                window.location.href = "signin.html";
+            }).catch((error) => {
+                console.error("Error signing out:", error);
+                alert("Failed to sign out. Please try again.");
+            });
+        };
+    </script>
+
+    <!-- Existing JavaScript for Budgets and Expenses -->
+    <script>
+        // Arrays to store budget and expense data
+        let budgets = JSON.parse(localStorage.getItem('budgets')) || [];
+        let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+        let budgetExpenseChart, budgetAmountChart;
+
+        // Shows the page corresponding to the provided page ID
+        function showPage(event, pageId) {
+            event.preventDefault(); // Prevent default link behavior if necessary
+
+            // Hide all pages
+            document.querySelectorAll('.main-content > div').forEach(div => {
+                div.classList.remove('active');
+            });
+            // Show the selected page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Remove 'active' class from all menu links
+            document.querySelectorAll('.menu li a').forEach(a => {
+                a.classList.remove('active');
+            });
+            
+            // Add 'active' class to the clicked menu link
+            const currentLink = event.currentTarget;
+            currentLink.classList.add('active');
+        }
+
+        // Toggles the display of a modal based on its ID and desired display status
+        function toggleModal(modalId, display) {
+            const modal = document.getElementById(modalId);
+            if(display === 'block') {
+                modal.classList.add('show');
+                modal.style.display = 'block';
+            } else {
+                modal.classList.remove('show');
+                modal.style.display = 'none';
+            }
+        }
+
+        // Display the budget modal details
+        function showBudgetDetailsModal(budgetIndex) {
+            const budget = budgets[budgetIndex];
+            const budgetDetailsDiv = document.getElementById('budgetDetails');
+            const expenseList = document.getElementById('expenseDetailsList');
+            
+            // Update the budget details and expenses list in the modal
+            budgetDetailsDiv.innerHTML = `
+                <p><strong>Name:</strong> ${budget.name}</p>
+                <p><strong>Amount:</strong> ₹${budget.amount}</p>
+                <p><strong>Spent:</strong> ₹${budget.spent}</p>
+                <input type="hidden" id="budgetIndex" value="${budgetIndex}">
+            `;
+            expenseList.innerHTML = budget.expenses.map(expense => `
+                <li>${expense.name}: ₹${expense.amount}</li>
+            `).join('');
+
+            // Clear previous inputs
+            document.getElementById('expenseName').value = '';
+            document.getElementById('expenseAmount').value = '';
+            document.getElementById('expenseDate').value = '';
+
+            toggleModal('budgetDetailsModal', 'block');
+        }
+
+        // Closes the modal displaying budget details
+        function closeBudgetDetailsModal() {
+            toggleModal('budgetDetailsModal', 'none');
+        }
+
+        // Display the edit expense modal
+        function showEditExpenseModal(expenseIndex) {
+            const expense = expenses[expenseIndex];
+            document.getElementById('editExpenseIndex').value = expenseIndex;
+            document.getElementById('editExpenseName').value = expense.name;
+            document.getElementById('editExpenseAmount').value = expense.amount;
+            document.getElementById('editExpenseDate').value = expense.date;
+            toggleModal('editExpenseModal', 'block');
+        }
+
+        // Closes the edit expense modal
+        function closeEditExpenseModal() {
+            toggleModal('editExpenseModal', 'none');
+        }
+
+        // Saves the edited expense
+        function saveEditedExpense() {
+            const expenseIndex = parseInt(document.getElementById('editExpenseIndex').value);
+            const name = document.getElementById('editExpenseName').value.trim();
+            const amount = parseFloat(document.getElementById('editExpenseAmount').value);
+            const date = document.getElementById('editExpenseDate').value;
+
+            if (name && !isNaN(amount) && date && expenses[expenseIndex]) {
+                const oldExpense = expenses[expenseIndex];
+                const budgetIndex = budgets.findIndex(b => b.name === oldExpense.budget);
+                if (budgetIndex !== -1) {
+                    // Update the budget's spent amount
+                    budgets[budgetIndex].spent -= oldExpense.amount;
+                    budgets[budgetIndex].spent += amount;
+
+                    // Update the expense
+                    expenses[expenseIndex] = { ...oldExpense, name, amount, date };
+                    budgets[budgetIndex].expenses = budgets[budgetIndex].expenses.map(exp => 
+                        exp === oldExpense ? expenses[expenseIndex] : exp
+                    );
+
+                    // Save to local storage
+                    localStorage.setItem('budgets', JSON.stringify(budgets));
+                    localStorage.setItem('expenses', JSON.stringify(expenses));
+
+                    updateBudgetList();
+                    closeEditExpenseModal();
+                } else {
+                    alert('Associated budget not found.');
+                }
+            } else {
+                alert('Please enter valid expense details.');
+            }
+        }
+
+        // Adds new budget and updates it in local storage
+        function addBudget() {
+            const name = document.getElementById('newBudgetName').value.trim();
+            const amount = parseFloat(document.getElementById('newBudgetAmount').value);
+        
+            if (name && !isNaN(amount)) {
+                // Check if budget with the same name exists
+                const existingBudget = budgets.find(b => b.name.toLowerCase() === name.toLowerCase());
+                if (existingBudget) {
+                    alert('A budget with this name already exists.');
+                    return;
+                }
+
+                budgets.push({ name, amount, spent: 0, expenses: [] });
+                localStorage.setItem('budgets', JSON.stringify(budgets)); // Save budgets to local storage
+                updateBudgetList();
+                document.getElementById('newBudgetName').value = '';
+                document.getElementById('newBudgetAmount').value = '';
+            } else {
+                alert('Please enter valid budget details.');
+            }
+        }
+
+        // Adds new expense to the budget and updates it in local storage
+        function addExpense() {
+            const name = document.getElementById('expenseName').value.trim();
+            const amount = parseFloat(document.getElementById('expenseAmount').value);
+            const date = document.getElementById('expenseDate').value;
+            const budgetIndex = parseInt(document.getElementById('budgetIndex').value);
+        
+            if (name && !isNaN(amount) && date && budgets[budgetIndex]) {
+                const expense = { name, amount, date, budget: budgets[budgetIndex].name };
+                budgets[budgetIndex].expenses.push(expense);
+                budgets[budgetIndex].spent += amount;
+                expenses.push(expense);
+
+                localStorage.setItem('budgets', JSON.stringify(budgets)); // Save budgets to local storage
+                localStorage.setItem('expenses', JSON.stringify(expenses)); // Save expenses to local storage
+
+                updateBudgetList();
+                closeBudgetDetailsModal();
+            } else {
+                alert('Please enter valid expense details.');
+            }
+        }
+
+        // Deletes an expense
+        function deleteExpense(expenseIndex) {
+            const expense = expenses[expenseIndex];
+            if (confirm(`Are you sure you want to delete the expense "${expense.name}"?`)) {
+                // Find the budget associated with this expense
+                const budgetIndex = budgets.findIndex(b => b.name === expense.budget);
+                if (budgetIndex !== -1) {
+                    // Remove the expense from the budget's expenses
+                    budgets[budgetIndex].expenses = budgets[budgetIndex].expenses.filter(exp => exp !== expense);
+                    // Update the spent amount
+                    budgets[budgetIndex].spent -= expense.amount;
+                }
+
+                // Remove the expense from the expenses array
+                expenses.splice(expenseIndex, 1);
+
+                // Save to local storage
+                localStorage.setItem('budgets', JSON.stringify(budgets));
+                localStorage.setItem('expenses', JSON.stringify(expenses));
+
+                updateBudgetList();
+            }
+        }
+
+        // Function to show the Edit Budget Modal
+        function showEditBudgetModal(budgetIndex) {
+            const budget = budgets[budgetIndex];
+            document.getElementById('editBudgetIndex').value = budgetIndex;
+            document.getElementById('editBudgetName').value = budget.name;
+            document.getElementById('editBudgetAmount').value = budget.amount;
+            toggleModal('editBudgetModal', 'block');
+        }
+
+        // Function to close the Edit Budget Modal
+        function closeEditBudgetModal() {
+            toggleModal('editBudgetModal', 'none');
+        }
+
+        // Function to save the edited budget
+        function saveEditedBudget() {
+            const budgetIndex = parseInt(document.getElementById('editBudgetIndex').value);
+            const name = document.getElementById('editBudgetName').value.trim();
+            const amount = parseFloat(document.getElementById('editBudgetAmount').value);
+
+            if (name && !isNaN(amount) && budgets[budgetIndex]) {
+                const oldBudget = budgets[budgetIndex];
+                // Check if the name is changing and if the new name already exists
+                if (name !== oldBudget.name) {
+                    const existingBudget = budgets.find(b => b.name.toLowerCase() === name.toLowerCase() && b !== oldBudget);
+                    if (existingBudget) {
+                        alert('A budget with this name already exists.');
+                        return;
+                    }
+                    // Update the budget name in expenses
+                    expenses.forEach(expense => {
+                        if (expense.budget === oldBudget.name) {
+                            expense.budget = name;
+                        }
+                    });
+                }
+                // Update the budget details
+                oldBudget.name = name;
+                oldBudget.amount = amount;
+                // Save changes to local storage
+                localStorage.setItem('budgets', JSON.stringify(budgets));
+                localStorage.setItem('expenses', JSON.stringify(expenses));
+                updateBudgetList();
+                closeEditBudgetModal();
+            } else {
+                alert('Please enter valid budget details.');
+            }
+        }
+
+        // Function to delete a budget
+        function deleteBudget(budgetIndex) {
+            const budget = budgets[budgetIndex];
+            if (confirm(`Are you sure you want to delete the budget "${budget.name}"? This will also delete all associated expenses.`)) {
+                // Remove associated expenses
+                expenses = expenses.filter(expense => expense.budget !== budget.name);
+                // Remove the budget
+                budgets.splice(budgetIndex, 1);
+                // Save changes to local storage
+                localStorage.setItem('budgets', JSON.stringify(budgets));
+                localStorage.setItem('expenses', JSON.stringify(expenses));
+                updateBudgetList();
+            }
+        }
+
+        // Updates the budget list, charts, and stats
+        function updateBudgetList() {
+            const budgetList = document.getElementById('budgetList');
+            const budgetGraphs = document.getElementById('budgetGraphs');
+            const recentExpensesList = document.getElementById('recentExpensesList');
+            
+            // Update the budget list with charts and buttons
+            budgetList.innerHTML = budgets.map((budget, index) => `
+                <div class="budget-item">
+                    <div class="chart-container" onclick="showBudgetDetailsModal(${index})">
+                        <h4>${budget.name}</h4>
+                        <canvas id="budgetChart${index}"></canvas>
+                    </div>
+                    <div class="budget-buttons">
+                        <button class="edit-budget-btn" onclick="showEditBudgetModal(${index})">Edit</button>
+                        <button class="delete-budget-btn" onclick="deleteBudget(${index})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+
+            // Generate bar graph for each budget
+            budgets.forEach((budget, index) => {
+                const ctx = document.getElementById(`budgetChart${index}`).getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Spent', 'Remaining'],
+                        datasets: [{
+                            label: 'Amount',
+                            data: [budget.spent, budget.amount - budget.spent],
+                            backgroundColor: ['#557C56', '#A5B68D']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: { y: { beginAtZero: true } },
+                        plugins: {
+                            legend: { display: false }
+                        }
+                    }
+                });
+            });
+
+            // Update total budget, total spend, budget count, total expenses
+            const totalBudget = budgets.reduce((sum, b) => sum + b.amount, 0);
+            const totalSpend = budgets.reduce((sum, b) => sum + b.spent, 0);
+            const totalRemaining = totalBudget - totalSpend;
+            const totalExpenses = expenses.length;
+
+            document.getElementById('totalBudget').textContent = `₹${totalBudget}`;
+            document.getElementById('totalSpend').textContent = `₹${totalSpend}`;
+            document.getElementById('budgetCount').textContent = budgets.length;
+            document.getElementById('totalExpenses').textContent = totalExpenses;
+
+            // Update recent expenses (last 5)
+            recentExpensesList.innerHTML = expenses.slice(-5).reverse().map(exp => `
+                <li><strong>${exp.name}</strong>: ₹${exp.amount} on ${exp.date} </li>
+            `).join('');
+
+            // Generate a pie chart for total spend vs remaining budget in dashboard
+            if (budgetExpenseChart) budgetExpenseChart.destroy();
+            budgetExpenseChart = new Chart(document.getElementById('budgetExpenseChart'), {
+                type: 'pie',
+                data: {
+                    labels: ['Total Spent', 'Remaining'],
+                    datasets: [{ data: [totalSpend, totalRemaining], backgroundColor: ['#557C56', '#A5B68D'] }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            // Bar chart for dashboard
+            if (budgetAmountChart) budgetAmountChart.destroy();
+            budgetAmountChart = new Chart(document.getElementById('budgetAmountChart'), {
+                type: 'bar',
+                data: {
+                    labels: budgets.map(b => b.name),
+                    datasets: [
+                        { label: 'Budget Amount', data: budgets.map(b => b.amount), backgroundColor: '#557C56' },
+                        { label: 'Amount Spent', data: budgets.map(b => b.spent), backgroundColor: '#A5B68D' }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+            });
+
+            // Update the expense section by rebuilding the expense table
+            const expenseList = document.getElementById('expenseList');
+            expenseList.innerHTML = `
+                <tr>
+                    <th>NAME</th>
+                    <th>AMOUNT</th>
+                    <th>DATE</th>
+                    <th>BUDGET</th>
+                    <th>ACTIONS</th>
+                </tr>
+                ${expenses.map((exp, index) => `
+                    <tr>
+                        <td>${exp.name}</td>
+                        <td>₹${exp.amount}</td>
+                        <td>${exp.date}</td>
+                        <td>${exp.budget}</td>
+                        <td>
+                            <button class="edit-btn" onclick="showEditExpenseModal(${index})">Edit</button>
+                            <button class="delete-btn" onclick="deleteExpense(${index})">Delete</button>
+                        </td>
+                    </tr>
+                `).join('')}
+            `;
+        }
+
+        // Load data on page load
+        window.onload = updateBudgetList;
+
+        // Close modals when clicking outside of them
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target == modal) {
+                    modal.classList.remove('show');
+                    modal.style.display = 'none';
+                }
+            });
+        }
+
+        // Function to toggle submenus
+        function toggleSubmenu(event) {
+            event.preventDefault();
+            const parentLi = event.currentTarget.parentElement;
+            parentLi.classList.toggle('open');
+        }
+    </script>
+</body>
+</html>
